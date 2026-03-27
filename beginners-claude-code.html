@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code for Beginners</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Fira+Code:wght@400;500&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box;}
+  :root{
+    --bg:#FAFAFA;--dark:#0F0F14;--dark2:#16161E;--dark3:#1E1E2A;
+    --teal:#0D9488;--tealL:#CCFBF1;
+    --blue:#2563EB;--blueL:#DBEAFE;
+    --purple:#7C3AED;--purpleL:#EDE9FE;
+    --amber:#F59E0B;--amberL:#FEF3C7;--green:#16A34A;--red:#DC2626;
+    --text:#111827;--text2:#6B7280;--text3:#9CA3AF;
+    --white:#fff;--border:#E5E7EB;--borderL:#F3F4F6;
+  }
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--dark);overflow:hidden;height:100vh;width:100vw;}
+  .slide{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:56px 72px;opacity:0;visibility:hidden;transition:opacity .35s;text-align:center;}
+  .slide.active{opacity:1;visibility:visible;}
+  .slide.light{background:var(--bg);color:var(--text);}
+  .slide.dark{background:var(--dark);color:var(--white);}
+  .slide.dark2{background:var(--dark2);color:var(--white);}
+  .slide.dark3{background:var(--dark3);color:var(--white);}
+  .slide.teal{background:var(--teal);color:var(--white);}
+  .slide.tealL{background:var(--tealL);color:var(--text);}
+  .slide.blue{background:var(--blue);color:var(--white);}
+  .slide.blueL{background:var(--blueL);color:var(--text);}
+  .slide.purple{background:var(--purple);color:var(--white);}
+  .slide.purpleL{background:var(--purpleL);color:var(--text);}
+  .slide.amber{background:var(--amberL);color:var(--text);}
+
+  h1{font-size:52px;font-weight:900;line-height:1.08;letter-spacing:-2px;margin-bottom:14px;}
+  h2{font-size:38px;font-weight:800;line-height:1.12;letter-spacing:-.8px;margin-bottom:10px;}
+  h3{font-size:28px;font-weight:700;line-height:1.2;margin-bottom:10px;}
+  .big{font-size:46px;font-weight:900;line-height:1.15;max-width:850px;letter-spacing:-1.5px;}
+  .sub{font-size:20px;font-weight:400;opacity:.7;line-height:1.5;max-width:680px;}
+  .sm{font-size:14px;opacity:.45;}
+  .tag{display:inline-block;padding:4px 13px;border-radius:20px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:18px;}
+  .tag.t{background:rgba(13,148,136,.12);color:var(--teal);}
+  .tag.b{background:rgba(37,99,235,.12);color:var(--blue);}
+  .tag.p{background:rgba(124,58,237,.12);color:var(--purple);}
+  .tag.w{background:rgba(255,255,255,.12);color:var(--white);}
+
+  /* Flow */
+  .flow{display:flex;align-items:center;gap:8px;max-width:960px;margin:20px auto;flex-wrap:wrap;justify-content:center;}
+  .fstep{border-radius:14px;padding:16px 20px;font-size:14px;font-weight:600;text-align:center;min-width:110px;line-height:1.35;background:var(--white);border:1px solid var(--border);color:var(--text);}
+  .farr{font-size:18px;color:var(--text3);font-weight:700;}
+  .slide.dark .fstep,.slide.dark2 .fstep,.slide.dark3 .fstep{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.12);color:var(--white);}
+  .slide.dark .farr,.slide.dark2 .farr,.slide.dark3 .farr{color:rgba(255,255,255,.25);}
+  .fstep.at{background:var(--teal);border-color:var(--teal);color:var(--white);}
+  .fstep.ab{background:var(--blue);border-color:var(--blue);color:var(--white);}
+  .fstep.ap{background:var(--purple);border-color:var(--purple);color:var(--white);}
+
+  /* Cards */
+  .cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:880px;width:100%;margin:14px auto;}
+  .cards.c3{grid-template-columns:1fr 1fr 1fr;}
+  .cards.c4{grid-template-columns:1fr 1fr 1fr 1fr;}
+  .card{background:var(--white);border-radius:14px;padding:20px 22px;text-align:left;border:1px solid var(--border);}
+  .card h4{font-size:15px;font-weight:700;margin-bottom:4px;}
+  .card p{font-size:13px;color:var(--text2);line-height:1.4;}
+  .slide.dark .card,.slide.dark2 .card,.slide.dark3 .card{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.1);}
+  .slide.dark .card h4,.slide.dark2 .card h4,.slide.dark3 .card h4{color:var(--white);}
+  .slide.dark .card p,.slide.dark2 .card p,.slide.dark3 .card p{color:rgba(255,255,255,.55);}
+
+  /* VS columns */
+  .vs{display:flex;gap:20px;max-width:920px;width:100%;margin:14px auto;}
+  .vsc{flex:1;border-radius:16px;padding:22px 26px;text-align:left;}
+  .vsc.m{background:#F3F4F6;border:1px solid var(--border);}
+  .vsc.g{background:#ECFDF5;border:2px solid var(--teal);}
+  .vsc.gb{background:#EFF6FF;border:2px solid var(--blue);}
+  .vsc.gp{background:#F5F3FF;border:2px solid var(--purple);}
+  .vsc h4{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;color:var(--text3);}
+  .vsc.g h4{color:var(--teal);}.vsc.gb h4{color:var(--blue);}.vsc.gp h4{color:var(--purple);}
+  .vsc pre{font-family:'Fira Code',monospace;font-size:15px;line-height:1.5;white-space:pre-wrap;}
+
+  /* Icon grid */
+  .igrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:600px;margin:16px auto;}
+  .ibox{display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 16px;border-radius:14px;background:var(--white);border:1px solid var(--border);}
+  .ibox .icon{font-size:32px;}.ibox .ilabel{font-size:13px;font-weight:700;}.ibox .idesc{font-size:11px;color:var(--text3);text-align:center;line-height:1.3;}
+
+  /* Callout */
+  .callout{background:rgba(13,148,136,.06);border-left:4px solid var(--teal);border-radius:0 12px 12px 0;padding:18px 24px;text-align:left;max-width:720px;width:100%;margin:14px auto;font-size:18px;line-height:1.5;}
+  .callout.cb{background:rgba(37,99,235,.06);border-left-color:var(--blue);}
+  .callout.cp{background:rgba(124,58,237,.06);border-left-color:var(--purple);}
+
+  /* Desktop App Mockup */
+  .app-mock{background:#1a1a2e;border-radius:16px;max-width:820px;width:100%;margin:14px auto;overflow:hidden;border:1px solid rgba(255,255,255,.1);box-shadow:0 8px 32px rgba(0,0,0,.3);}
+  .app-titlebar{height:38px;background:#12121e;display:flex;align-items:center;padding:0 14px;gap:8px;}
+  .app-dot{width:12px;height:12px;border-radius:50%;}
+  .app-dot.r{background:#ff5f57;}.app-dot.y{background:#ffbd2e;}.app-dot.g{background:#28c840;}
+  .app-titlebar span{color:rgba(255,255,255,.35);font-size:12px;font-weight:500;margin-left:8px;}
+  .app-body{padding:24px 28px;color:#e2e8f0;text-align:left;}
+  .app-body .user-msg{background:rgba(37,99,235,.15);border:1px solid rgba(37,99,235,.25);border-radius:12px;padding:14px 18px;margin-bottom:14px;font-size:14px;line-height:1.5;}
+  .app-body .user-msg .label{font-size:11px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;}
+  .app-body .claude-msg{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:14px 18px;margin-bottom:14px;font-size:14px;line-height:1.5;}
+  .app-body .claude-msg .label{font-size:11px;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;}
+  .app-body .tool-use{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2);border-radius:10px;padding:10px 14px;margin:8px 0;font-family:'Fira Code',monospace;font-size:12px;color:var(--amber);}
+  .app-body .tool-use .tl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;opacity:.6;}
+
+  /* Permission Dialog */
+  .perm-dialog{background:#1e1e2e;border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:20px 24px;max-width:600px;width:100%;margin:14px auto;text-align:left;}
+  .perm-dialog .perm-title{font-size:14px;font-weight:700;color:var(--amber);margin-bottom:10px;}
+  .perm-dialog .perm-detail{font-size:13px;color:#e2e8f0;line-height:1.5;margin-bottom:14px;font-family:'Fira Code',monospace;background:rgba(0,0,0,.2);padding:10px 14px;border-radius:8px;}
+  .perm-btns{display:flex;gap:8px;}
+  .perm-btn{padding:8px 20px;border-radius:8px;font-size:13px;font-weight:600;border:none;cursor:pointer;font-family:'Inter',sans-serif;}
+  .perm-btn.allow{background:var(--green);color:white;}
+  .perm-btn.deny{background:rgba(255,255,255,.08);color:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.15);}
+  .perm-btn.always{background:rgba(37,99,235,.2);color:var(--blue);border:1px solid rgba(37,99,235,.3);}
+
+  /* Table */
+  .stbl{max-width:820px;width:100%;border-collapse:collapse;margin:14px auto;text-align:left;}
+  .stbl th{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text3);padding:8px 14px;border-bottom:2px solid var(--border);}
+  .stbl td{font-size:16px;padding:10px 14px;border-bottom:1px solid var(--borderL);vertical-align:top;}
+  .stbl td:first-child{font-weight:600;}
+  .stbl code{font-family:'Fira Code',monospace;font-size:13px;background:#F3F4F6;padding:2px 6px;border-radius:4px;color:var(--teal);}
+  .slide.dark .stbl th,.slide.dark2 .stbl th,.slide.dark3 .stbl th{color:rgba(255,255,255,.35);border-color:rgba(255,255,255,.12);}
+  .slide.dark .stbl td,.slide.dark2 .stbl td,.slide.dark3 .stbl td{color:rgba(255,255,255,.8);border-color:rgba(255,255,255,.06);}
+  .slide.dark .stbl code,.slide.dark2 .stbl code,.slide.dark3 .stbl code{background:rgba(255,255,255,.08);color:#34D399;}
+
+  /* Layers */
+  .layers{display:flex;flex-direction:column;gap:6px;max-width:500px;margin:16px auto;width:100%;}
+  .layer{padding:16px 24px;border-radius:12px;font-size:16px;font-weight:700;text-align:left;color:var(--white);}
+
+  /* Swim lanes */
+  .lanes{display:flex;gap:12px;max-width:800px;margin:16px auto;width:100%;}
+  .lane{flex:1;border-radius:14px;padding:18px;text-align:center;border:2px dashed rgba(124,58,237,.3);background:rgba(124,58,237,.04);}
+  .lane h4{font-size:13px;font-weight:700;color:var(--purple);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;}
+  .lane p{font-size:13px;color:var(--text2);line-height:1.4;}
+
+  /* Glass */
+  .glass{width:120px;height:180px;border:4px solid var(--text3);border-top:none;border-radius:0 0 20px 20px;position:relative;overflow:hidden;}
+  .glass-fill{position:absolute;bottom:0;width:100%;transition:height .5s;}
+
+  /* Journey */
+  .journey{display:flex;gap:16px;max-width:960px;margin:20px auto;}
+  .jstep{flex:1;padding:24px 18px;border-radius:16px;text-align:center;}
+  .jstep h3{font-size:16px;margin-bottom:6px;}
+  .jstep p{font-size:13px;opacity:.75;line-height:1.4;}
+  .jnum{font-size:36px;font-weight:900;opacity:.2;margin-bottom:4px;}
+
+  /* Prefix badges */
+  .prefix{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:10px;font-family:'Fira Code',monospace;font-size:18px;font-weight:600;}
+  .prefix.slash{background:rgba(13,148,136,.1);color:var(--teal);border:1px solid rgba(13,148,136,.2);}
+  .prefix.at{background:rgba(37,99,235,.1);color:var(--blue);border:1px solid rgba(37,99,235,.2);}
+  .prefix.bang{background:rgba(245,158,11,.1);color:var(--amber);border:1px solid rgba(245,158,11,.2);}
+
+  /* Terminal mockup */
+  .term-mock{background:#0d1117;border-radius:14px;max-width:700px;width:100%;margin:14px auto;overflow:hidden;border:1px solid rgba(255,255,255,.08);box-shadow:0 8px 32px rgba(0,0,0,.4);}
+  .term-titlebar{height:34px;background:#161b22;display:flex;align-items:center;padding:0 14px;gap:8px;}
+  .term-titlebar span{color:rgba(255,255,255,.3);font-size:11px;font-weight:500;margin-left:8px;}
+  .term-body{padding:18px 22px;font-family:'Fira Code',monospace;font-size:13px;line-height:1.8;color:#c9d1d9;}
+  .term-body .prompt{color:#58a6ff;}
+  .term-body .cmd{color:#f0f6fc;}
+  .term-body .out{color:#8b949e;}
+
+  /* Demo slide */
+  .demo-badge{display:inline-flex;align-items:center;gap:10px;padding:14px 32px;border-radius:16px;background:rgba(255,255,255,.06);border:2px dashed rgba(255,255,255,.15);font-size:18px;font-weight:600;color:rgba(255,255,255,.7);margin-top:20px;}
+
+  /* Big comparison */
+  .bigvs{display:flex;gap:0;max-width:900px;width:100%;margin:20px auto;}
+  .bigvs-col{flex:1;padding:32px 28px;text-align:center;}
+  .bigvs-col h3{font-size:20px;font-weight:800;margin-bottom:16px;}
+  .bigvs-col .bigicon{font-size:56px;margin-bottom:12px;}
+  .bigvs-col p{font-size:15px;line-height:1.6;opacity:.8;}
+  .bigvs-div{width:2px;background:rgba(255,255,255,.1);margin:20px 0;border-radius:2px;}
+
+  /* Setup visual */
+  .setup-row{display:flex;gap:16px;max-width:700px;margin:16px auto;width:100%;}
+  .setup-item{flex:1;border-radius:14px;padding:24px 18px;text-align:center;}
+  .setup-item .sicon{font-size:44px;margin-bottom:8px;}
+  .setup-item h4{font-size:15px;font-weight:700;margin-bottom:4px;}
+  .setup-item p{font-size:12px;opacity:.6;line-height:1.4;}
+
+  /* Notes */
+  .notes{display:none;}
+  /* Notes panel removed — now opens in separate window for presenter */
+
+  /* Nav */
+  .nav{position:fixed;bottom:18px;right:24px;display:flex;gap:6px;z-index:100;align-items:center;}
+  .nav button{width:40px;height:40px;border-radius:10px;border:none;background:rgba(255,255,255,.1);color:white;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);}
+  .nav button:hover{background:rgba(255,255,255,.2);}
+  .ctr{color:rgba(255,255,255,.35);font-size:12px;font-weight:500;font-variant-numeric:tabular-nums;margin:0 6px;}
+  .progress{position:fixed;top:0;left:0;height:3px;transition:width .35s;z-index:100;}
+  .nkey{position:fixed;bottom:18px;left:24px;color:rgba(255,255,255,.2);font-size:11px;z-index:100;}
+
+  @media(max-width:900px){
+    .slide{padding:28px 20px;}h1{font-size:34px;}h2{font-size:28px;}.big{font-size:32px;}
+    .vs,.journey,.lanes,.bigvs,.setup-row{flex-direction:column;}.cards,.cards.c3,.cards.c4{grid-template-columns:1fr;}.igrid{grid-template-columns:repeat(2,1fr);}
+  }
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<div class="nkey">Press <strong>F</strong> fullscreen &middot; <strong>N</strong> presenter notes (separate window)</div>
+
+<div id="deck">
+
+<!-- ════════════════ INTRO ════════════════ -->
+<div class="slide dark" data-s="intro">
+  <div class="tag w">Wiom Team</div>
+  <h1>Claude Code<br>for Beginners</h1>
+  <p class="sub" style="margin-top:14px;">What it is. How it works. How to use it.</p>
+  <div style="display:flex;gap:10px;margin-top:36px;">
+    <button onclick="jumpTo('s1')" style="padding:10px 24px;border-radius:10px;border:2px solid var(--teal);background:transparent;color:var(--teal);font-family:'Inter',sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Session 1: The Agent</button>
+    <button onclick="jumpTo('s2')" style="padding:10px 24px;border-radius:10px;border:2px solid var(--blue);background:transparent;color:var(--blue);font-family:'Inter',sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Session 2: Memory</button>
+    <button onclick="jumpTo('s3')" style="padding:10px 24px;border-radius:10px;border:2px solid var(--purple);background:transparent;color:var(--purple);font-family:'Inter',sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Session 3: Ecosystem</button>
+  </div>
+  <p class="sm" style="margin-top:20px;">Arrow keys to navigate &middot; N for presenter notes</p>
+  <div class="notes">Welcome everyone. This program covers what is UNIQUE to Claude Code — the agent, not the chatbot. We will NOT cover generic prompting tips you already know. This is about the tools, features, and workflows that only exist in Claude Code. Desktop App is your primary interface, but we will also introduce the terminal/CLI so you're comfortable with both. Three sessions, 45 minutes each.</div>
+</div>
+
+<!-- 3 Sessions Overview -->
+<div class="slide light" data-s="intro">
+  <h2>3 Sessions. 3 Mental Models.</h2>
+  <div class="journey" style="margin-top:16px;">
+    <div class="jstep" style="background:var(--tealL);border:2px solid var(--teal);"><div class="jnum" style="color:var(--teal);">1</div><h3 style="color:var(--teal);">The Agent</h3><p>What it is, how it works,<br>getting started</p></div>
+    <div class="jstep" style="background:var(--blueL);border:2px solid var(--blue);"><div class="jnum" style="color:var(--blue);">2</div><h3 style="color:var(--blue);">Memory &amp; Workflow</h3><p>CLAUDE.md, models,<br>plan mode, version control</p></div>
+    <div class="jstep" style="background:var(--purpleL);border:2px solid var(--purple);"><div class="jnum" style="color:var(--purple);">3</div><h3 style="color:var(--purple);">Ecosystem</h3><p>Connected tools, sub-agents,<br>plugins, voice</p></div>
+  </div>
+  <div class="notes">Everything in these 3 sessions is Claude Code specific. Nothing here applies to regular Claude.ai chat. Session 1: what Claude Code IS, how it differs from chat/ChatGPT, setup, and how you interact with it. Session 2: how to customize it, work efficiently, version control, and pick the right model. Session 3: how it connects to other tools and scales with sub-agents and plugins.</div>
+</div>
+
+<!-- ════════════════ SESSION 1: THE AGENT ════════════════ -->
+<div class="slide teal" data-s="s1">
+  <div class="tag w">Session 1</div>
+  <h1>The Agent</h1>
+  <p class="sub" style="margin-top:10px;">What Claude Code is and how to get started.</p>
+  <div class="notes">This session answers three questions: What is Claude Code? How is it different from Claude chat or ChatGPT? And how do you actually use it? By the end, you'll understand the fundamental difference and be ready to try it yourself.</div>
+</div>
+
+<!-- What is an Agent? -->
+<div class="slide dark2" data-s="s1">
+  <div class="tag t">Jargon: Agent</div>
+  <h2>What is an "agent"?</h2>
+  <div class="vs" style="margin-top:20px;">
+    <div class="vsc" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);text-align:center;">
+      <div style="font-size:56px;margin-bottom:8px;">&#128188;</div>
+      <h4 style="color:rgba(255,255,255,.5);">Travel Agent</h4>
+      <p style="font-size:18px;color:rgba(255,255,255,.7);margin-top:8px;">Books flights <strong>for you</strong></p>
+    </div>
+    <div class="vsc" style="background:rgba(13,148,136,.08);border:2px solid var(--teal);text-align:center;">
+      <div style="font-size:56px;margin-bottom:8px;">&#129302;</div>
+      <h4 style="color:var(--teal);">AI Agent</h4>
+      <p style="font-size:18px;color:rgba(255,255,255,.7);margin-top:8px;">Does tasks <strong>for you</strong></p>
+    </div>
+  </div>
+  <div class="notes">Before defining Claude Code, make sure they understand the word "agent." Most people already know what an agent is in real life — a travel agent, a real estate agent, an insurance agent. What do they all have in common? They have specialized tools, domain knowledge, and they take action on your behalf. You tell the travel agent "I need to fly to Mumbai on Friday" — they don't just tell you about flights, they BOOK one. An AI agent is the same concept but in software. It has tools (file editing, running commands, searching), it has knowledge (the AI model), and it takes action autonomously. The key distinction from a chatbot: a chatbot answers questions, an agent does things. Claude Code is an AI agent.</div>
+</div>
+
+<!-- NEW: What IS Claude Code? -->
+<div class="slide light" data-s="s1">
+  <div class="tag t">The Big Question</div>
+  <h2>What is Claude Code?</h2>
+  <div class="flow" style="margin-top:28px;">
+    <div class="fstep" style="font-size:18px;">&#129504; Claude brain</div>
+    <div class="farr" style="font-size:24px;">+</div>
+    <div class="fstep at" style="font-size:18px;">&#128295; Tools</div>
+    <div class="farr" style="font-size:24px;">=</div>
+    <div class="fstep" style="font-size:18px;border-color:var(--teal);border-width:2px;font-weight:800;">Claude Code</div>
+  </div>
+  <div class="notes">Start simple. Claude Code uses the exact same AI brain as Claude.ai chat. The difference: Claude Code has TOOLS. It can read your files, edit them, run commands, connect to Slack and Gmail — it takes action in the real world. Claude chat just talks. Think of it this way: Claude chat is like calling a mechanic on the phone and describing your car problem. Claude Code is the mechanic sitting in your car with a toolbox. Same expertise, completely different capability.</div>
+</div>
+
+<!-- NEW: Claude Code vs Chat vs ChatGPT -->
+<div class="slide dark3" data-s="s1">
+  <div class="tag w">How Is It Different?</div>
+  <h2 style="margin-bottom:20px;">Three AI tools compared</h2>
+  <div class="bigvs">
+    <div class="bigvs-col" style="background:rgba(255,255,255,.03);border-radius:16px 0 0 16px;">
+      <div class="bigicon">&#128172;</div>
+      <h3 style="color:var(--text3);">Chat</h3>
+      <p style="font-size:18px;color:rgba(255,255,255,.5);">Talks <em>about</em> work</p>
+    </div>
+    <div class="bigvs-div"></div>
+    <div class="bigvs-col" style="background:rgba(13,148,136,.08);border-radius:0 16px 16px 0;">
+      <div class="bigicon">&#9889;</div>
+      <h3 style="color:var(--teal);">Claude Code</h3>
+      <p style="font-size:18px;color:rgba(255,255,255,.8);">Does the work</p>
+    </div>
+  </div>
+  <div class="notes">This is the slide that answers "why not just use ChatGPT?" Note: ChatGPT and Claude chat CAN also connect to some tools now — so tool connections are not a unique differentiator. The REAL differences: (1) Claude Code sees your entire project — all files, folder structure, history. Chat tools only see what you paste. (2) Claude Code writes changes directly into your files on your computer. Chat tools give you text to copy-paste. (3) Claude Code remembers your project across sessions via CLAUDE.md and auto-memory. Chat starts from zero every time. (4) Claude Code runs commands on your actual machine — installing software, running tests, starting servers. Chat can't touch your computer.</div>
+</div>
+
+<!-- NEW: Why & When -->
+<div class="slide light" data-s="s1">
+  <div class="tag t">When To Use What</div>
+  <h2>Use Claude Code when...</h2>
+  <div class="cards" style="margin-top:16px;max-width:700px;">
+    <div class="card" style="border-left:4px solid var(--teal);"><h4>&#128193; Files</h4></div>
+    <div class="card" style="border-left:4px solid var(--teal);"><h4>&#128268; Tools</h4></div>
+    <div class="card" style="border-left:4px solid var(--teal);"><h4>&#128257; Multi-step</h4></div>
+    <div class="card" style="border-left:4px solid var(--teal);"><h4>&#128260; Repeatable</h4></div>
+  </div>
+  <div class="notes">Simple decision framework. Use Claude Code when your task involves files (reading, creating, editing), when you need it to connect to tools (Slack, email, calendar), when the task has multiple steps (research then draft then format then send), or when you want to automate repeatable work. Use regular Claude chat for quick brainstorming, simple questions, or when no files/tools are involved. The rule of thumb: if you'd have to copy-paste things into chat, use Claude Code instead.</div>
+</div>
+
+
+<!-- NEW: Screenshot = Superpower -->
+<div class="slide dark" data-s="s1">
+  <div class="tag w">Your Most Powerful Secret Weapon</div>
+  <h1 style="font-size:44px;">Show. Don't describe.</h1>
+  <div class="cards c4" style="margin-top:20px;max-width:800px;">
+    <div class="card" style="text-align:center;"><div style="font-size:36px;margin-bottom:6px;">&#128680;</div><h4>Error message</h4><p>Screenshot it</p></div>
+    <div class="card" style="text-align:center;"><div style="font-size:36px;margin-bottom:6px;">&#127912;</div><h4>Design mockup</h4><p>Drag it in</p></div>
+    <div class="card" style="text-align:center;"><div style="font-size:36px;margin-bottom:6px;">&#128202;</div><h4>Spreadsheet</h4><p>Paste it</p></div>
+    <div class="card" style="text-align:center;"><div style="font-size:36px;margin-bottom:6px;">&#128221;</div><h4>Whiteboard</h4><p>Photo it</p></div>
+  </div>
+  <div class="notes">THIS is the skill multiplier for non-technical users. Before Claude Code, you'd spend 5 minutes typing out a description of an error. Now? Screenshot, paste, done. Four use cases: (1) Error message on screen? Screenshot it, paste into Claude Code, ask "what does this mean?" (2) Design mockup from Figma or a sketch? Drag it in, say "build this." (3) Spreadsheet with messy data? Screenshot the relevant section. (4) Whiteboard from a meeting? Take a photo, drop it in. Mechanics: Drag-and-drop into the window, or Ctrl+V to paste from clipboard. In the terminal, use @ with a file path: @screenshot.png. This is the most underrated feature. Master this on day one.</div>
+</div>
+
+<!-- How It Works -->
+<div class="slide light" data-s="s1">
+  <div class="tag t">How It Works</div>
+  <h2>You ask. Claude acts. You review.</h2>
+  <div style="position:relative;max-width:800px;margin:24px auto 0;">
+    <div class="flow">
+      <div class="fstep" style="min-width:160px;font-size:16px;">&#9997; Describe</div>
+      <div class="farr">&#8594;</div>
+      <div class="fstep" style="min-width:160px;font-size:16px;">&#129504; Permission</div>
+      <div class="farr">&#8594;</div>
+      <div class="fstep at" style="min-width:160px;font-size:16px;">&#9989; Action</div>
+    </div>
+  </div>
+  <div class="notes">Three steps, every time. (1) You type what you want in plain English. (2) Claude reads your files, makes a plan, and asks permission before making changes. (3) Claude executes and you review the result. The permission step is critical — Claude NEVER modifies files without asking first. You are always in control. In the Desktop App, you see each step happening in real time with expandable tool calls.</div>
+</div>
+
+<!-- 6 Tools -->
+<div class="slide light" data-s="s1">
+  <div class="tag t">Under the Hood</div>
+  <h2>6 tools. One agent.</h2>
+  <div class="igrid" style="margin-top:16px;">
+    <div class="ibox"><div class="icon">&#128214;</div><div class="ilabel">Read</div><div class="idesc">Opens files, images, PDFs</div></div>
+    <div class="ibox"><div class="icon">&#9998;</div><div class="ilabel">Edit</div><div class="idesc">Changes parts of files</div></div>
+    <div class="ibox"><div class="icon">&#128221;</div><div class="ilabel">Write</div><div class="idesc">Creates new files</div></div>
+    <div class="ibox"><div class="icon">&#9889;</div><div class="ilabel">Bash</div><div class="idesc">Runs terminal commands</div></div>
+    <div class="ibox"><div class="icon">&#128269;</div><div class="ilabel">Search</div><div class="idesc">Finds code and files</div></div>
+    <div class="ibox"><div class="icon">&#128268;</div><div class="ilabel">MCP</div><div class="idesc">Slack, Calendar, Gmail...</div></div>
+  </div>
+  <div class="notes">You don't pick these tools. Claude decides which ones to use based on your request. "Find all files about payments" = Search. "Update the header" = Edit. "Send a Slack message" = MCP. Bash is the tool that runs terminal commands — installing software, running tests, starting servers. Think of it as Claude typing commands for you. MCP stands for Model Context Protocol — it's the open standard (created by Anthropic) that lets Claude talk to external services like Slack, Calendar, Gmail, Figma. More on MCP in Session 3. None of these tools exist in Claude chat.</div>
+</div>
+
+<!-- Tool Use in Desktop App -->
+<div class="slide dark3" data-s="s1">
+  <div class="tag w">What It Looks Like</div>
+  <h3>Tools in action</h3>
+  <div class="app-mock" style="margin-top:14px;">
+    <div class="app-titlebar"><div class="app-dot r"></div><div class="app-dot y"></div><div class="app-dot g"></div><span>Claude Code - wiom-dashboard</span></div>
+    <div class="app-body">
+      <div class="user-msg"><div class="label">You</div>Add a search bar to the dashboard</div>
+      <div class="tool-use"><div class="tl">&#128269; Search</div>Finding existing Input components...</div>
+      <div class="tool-use"><div class="tl">&#128214; Read</div>Reading Dashboard.tsx</div>
+      <div class="tool-use"><div class="tl">&#9998; Edit</div>Adding SearchBar to Dashboard.tsx</div>
+      <div class="tool-use"><div class="tl">&#128221; Write</div>Creating SearchBar.tsx</div>
+      <div class="claude-msg"><div class="label">Claude</div>Done. Added a SearchBar that filters by title.</div>
+    </div>
+  </div>
+  <div class="notes">Walk through this. One request, four tools used automatically. Claude searched for existing components, read the dashboard file, edited it, and created a new file. In the Desktop App, each tool call is expandable — click to see details. You can click any file change to see the visual diff (side-by-side view of what changed). This is the agent loop in action.</div>
+</div>
+
+<!-- What Claude Can See -->
+<div class="slide light" data-s="s1">
+  <div class="tag t">Important</div>
+  <h2>Claude sees your project folder.</h2>
+  <div class="vs" style="margin-top:16px;">
+    <div class="vsc" style="background:#F0FDF4;border:2px solid var(--green);text-align:center;">
+      <h4 style="color:var(--green);">&#9989; Can see</h4>
+      <pre style="font-size:18px;text-align:center;">The folder you opened
+and everything in it</pre>
+    </div>
+    <div class="vsc m" style="text-align:center;">
+      <h4>&#10060; Cannot see</h4>
+      <pre style="font-size:18px;text-align:center;color:var(--text3);">Your screen
+Other apps
+Other folders
+Your browser</pre>
+    </div>
+  </div>
+  <div class="notes">Key misconception to clear up. Claude Code sees your project folder — the folder you chose when starting a session. Not your screen, not other apps, not random folders. In the Desktop App, you pick a project folder when starting. In the terminal, it's whichever folder you ran "claude" from. If Claude can't find files, you probably opened the wrong folder. That's why screenshots are so powerful — they let you show Claude things outside its view.</div>
+</div>
+
+<!-- Permissions (merged with dialog) -->
+<div class="slide dark3" data-s="s1">
+  <div class="tag w">You Are In Control</div>
+  <h2>Permissions</h2>
+  <div class="vs" style="margin-top:12px;max-width:540px;">
+    <div class="vsc" style="background:rgba(22,163,74,.08);border:1px solid rgba(22,163,74,.3);text-align:center;padding:14px;">
+      <h4 style="color:var(--green);">Auto-approved</h4>
+      <pre style="font-size:14px;color:rgba(255,255,255,.6);text-align:center;">Reading files
+Searching code</pre>
+    </div>
+    <div class="vsc" style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.3);text-align:center;padding:14px;">
+      <h4 style="color:var(--amber);">Asks you first</h4>
+      <pre style="font-size:14px;color:rgba(255,255,255,.6);text-align:center;">Editing files
+Running commands</pre>
+    </div>
+  </div>
+  <div class="perm-dialog" style="margin-top:12px;max-width:540px;">
+    <div class="perm-title">&#9888; Claude wants to edit a file</div>
+    <div class="perm-detail" style="font-size:12px;padding:8px 12px;">src/components/Header.tsx</div>
+    <div class="perm-btns">
+      <button class="perm-btn allow">Allow</button>
+      <button class="perm-btn always">Always Allow</button>
+      <button class="perm-btn deny">Deny</button>
+    </div>
+  </div>
+  <div class="notes">Claude Code has a permission system — it CANNOT change anything without your approval. Reading files is auto-approved (safe). Editing files, running commands — requires your click. Three buttons: Allow = yes, do this one thing. Always Allow = stop asking for this type of action. Deny = no, try something else. KEY MESSAGE: when in doubt, click Deny. Nothing breaks. Claude will ask differently or explain why. Recommendation for beginners: click Allow (not Always Allow) for the first few days so you see what Claude is doing. In the terminal, these appear as text prompts [Y/N/A] instead of buttons. Same concept.</div>
+</div>
+
+<!-- 3 Modes (moved from S2 to after Permissions) -->
+<div class="slide light" data-s="s1">
+  <div class="tag t">How Claude Behaves</div>
+  <h2>4 Modes</h2>
+  <div class="cards" style="margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:700px;">
+    <div class="card" style="border-top:3px solid var(--green);text-align:center;">
+      <h4 style="font-size:15px;">&#9995; Ask permissions</h4>
+      <p style="font-size:12px;color:var(--text2);margin-top:4px;">Always ask before making changes</p>
+      <p style="font-size:11px;color:var(--green);margin-top:6px;">Default. Start here.</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--amber);text-align:center;">
+      <h4 style="font-size:15px;">&lt;/&gt; Auto accept edits</h4>
+      <p style="font-size:12px;color:var(--text2);margin-top:4px;">Automatically accept all file edits</p>
+      <p style="font-size:11px;color:var(--amber);margin-top:6px;">Use with caution!</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--blue);text-align:center;">
+      <h4 style="font-size:15px;">&#128196; Plan mode</h4>
+      <p style="font-size:12px;color:var(--text2);margin-top:4px;">Create a plan before making changes</p>
+      <p style="font-size:11px;color:var(--blue);margin-top:6px;">Best for complex tasks.</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--red);text-align:center;">
+      <h4 style="font-size:15px;">&#9888; Bypass permissions</h4>
+      <p style="font-size:12px;color:var(--text2);margin-top:4px;">Accepts all permissions</p>
+      <p style="font-size:11px;color:var(--red);margin-top:6px;">Dangerous. Not recommended.</p>
+    </div>
+  </div>
+  <div class="notes">Claude Code has three modes that control how much freedom it has. Normal mode (default): Claude reads your files, makes a plan, and asks your permission before each change. This is where beginners should stay. Auto-Accept mode: Claude makes changes WITHOUT asking. Faster for experienced users who trust Claude, but risky for beginners — it will just edit files directly. Use with caution. Plan mode: Claude reads and analyzes but does NOT change any files. It proposes a plan and you review before anything happens. Best for complex or risky tasks where you want to understand the approach first. You can switch modes using /plan command or by clicking the mode indicator in the Desktop App input bar. Beginners: stay in Normal mode. Use Plan mode for big tasks. Avoid Auto-Accept until you're comfortable.</div>
+</div>
+
+<!-- Pause & Cancel -->
+<div class="slide dark2" data-s="s1">
+  <div class="tag w">Emergency Buttons</div>
+  <div style="display:flex;gap:40px;justify-content:center;margin-top:20px;">
+    <div style="text-align:center;">
+      <div style="font-size:64px;font-weight:900;color:var(--amber);font-family:'Fira Code',monospace;">Esc</div>
+      <p style="font-size:16px;color:rgba(255,255,255,.6);margin-top:8px;">Stop Claude mid-response</p>
+    </div>
+    <div style="text-align:center;">
+      <div style="font-size:64px;font-weight:900;color:var(--red);font-family:'Fira Code',monospace;">Ctrl+C</div>
+      <p style="font-size:16px;color:rgba(255,255,255,.6);margin-top:8px;">Cancel current operation</p>
+    </div>
+  </div>
+  <div class="notes">Teach this early — it relieves anxiety. "What if it does something wrong?" Answer: hit Escape. Claude stops instantly. Ctrl+C cancels the current operation. In the Desktop App, there's also a Stop button you can click. Demo it live: start something, hit Escape, show it stops. Nothing dramatic. Like cancelling a print job.</div>
+</div>
+
+<!-- Q&A Checkpoint 1 -->
+<div class="slide dark" data-s="s1">
+  <div class="tag w" style="background:rgba(255,255,255,.15);">Checkpoint</div>
+  <h2 style="margin-top:20px;">Questions so far?</h2>
+  <div class="notes">Pause for 2-3 minutes. Ask: "Any questions about what Claude Code is, how it works, or the permission system?" Common questions: "Can it access the internet?" — yes, through MCP connections. "Will it delete my files?" — not without permission in Normal mode. "How is this different from just asking ChatGPT?" — it acts on your files directly, doesn't just talk about them. Let people ask freely. This is where confusion surfaces.</div>
+</div>
+
+<!-- NEW: What is a Terminal -->
+<div class="slide light" data-s="s1">
+  <div class="tag t">Jargon: Terminal</div>
+  <h2>Two ways to use a computer</h2>
+  <div class="vs" style="margin-top:16px;">
+    <div class="vsc" style="background:#F0FDF4;border:2px solid var(--green);text-align:center;">
+      <h4 style="color:var(--green);">&#128433; GUI</h4>
+      <p style="font-size:20px;color:var(--text2);margin-top:12px;">Point and click</p>
+    </div>
+    <div class="vsc m" style="text-align:center;border:2px solid var(--teal);">
+      <h4 style="color:var(--teal);">&#9000; Terminal</h4>
+      <p style="font-size:20px;color:var(--text2);margin-top:12px;">Type commands</p>
+    </div>
+  </div>
+  <div class="notes">Two ways to interact with a computer. GUI = Graphical User Interface — windows, icons, menus, mouse clicks. Everything they already know: PowerPoint, Chrome, File Explorer. CLI = Command Line Interface — you type a command, the computer responds in text. Like texting your computer instead of pointing and clicking. The jargon: Terminal, Command Prompt, PowerShell, CLI, Shell — all mean roughly the same thing. Different names across operating systems. Windows has Command Prompt, PowerShell, and Windows Terminal. Mac has Terminal. Don't let the names confuse you — same concept.</div>
+</div>
+
+<!-- NEW: Ways to Access a Terminal -->
+<div class="slide light" data-s="s1">
+  <div class="tag t">5 Ways to Open a Terminal</div>
+  <h2>Pick any one</h2>
+  <div class="cards" style="margin-top:16px;">
+    <div class="card" style="border-left:4px solid var(--teal);"><h4>&#128187; Windows Terminal</h4></div>
+    <div class="card" style="border-left:4px solid var(--teal);"><h4>&#128196; VS Code Terminal</h4></div>
+    <div class="card" style="border-left:4px solid var(--teal);"><h4>&#128230; Git Bash</h4></div>
+    <div class="card" style="border-left:4px solid var(--teal);"><h4>&#9889; PowerShell</h4></div>
+    <div class="card" style="border-left:4px solid var(--teal);"><h4>&#128268; Inside Claude Code (<strong>!</strong>)</h4></div>
+  </div>
+  <div class="notes">Four ways to access a terminal, all equally valid. (1) Windows Terminal: built into Windows, search "Terminal" or "Command Prompt" in Start. (2) VS Code Terminal: if you use VS Code (a code editor), there's a built-in terminal. Go to View menu, click Terminal. Many developers prefer this because code and terminal are side by side. (3) Git Bash: when you install Git, it comes with "Git Bash" — a terminal that works like Mac/Linux terminals. Some people prefer this on Windows. (4) Inside Claude Code itself: remember the ! prefix from Session 2? Type !dir or !ls and Claude runs the command right there in the chat. You don't even need a separate terminal window. For beginners using the Desktop App, option 4 is actually the easiest — just use ! inside Claude Code.</div>
+</div>
+
+<!-- NEW: Desktop App vs Terminal (pros/cons) -->
+<div class="slide light" data-s="s1">
+  <div class="tag t">Two Interfaces</div>
+  <h2>Desktop App vs Terminal</h2>
+  <div class="vs" style="margin-top:16px;">
+    <div class="vsc" style="background:#ECFDF5;border:2px solid var(--teal);text-align:center;">
+      <h4 style="color:var(--teal);">&#11088; Desktop App</h4>
+      <pre style="font-size:16px;text-align:center;">Visual. Friendly.
+Start here.</pre>
+    </div>
+    <div class="vsc m" style="text-align:center;">
+      <h4>Terminal</h4>
+      <pre style="font-size:16px;text-align:center;">Fast. Scriptable.
+Power users.</pre>
+    </div>
+  </div>
+  <div class="notes">Two interfaces, same tool. Desktop App is your primary — it has visual diffs (side-by-side file changes), click-to-connect for Slack/Gmail, drag-and-drop for images, live browser preview, and scheduled recurring tasks. Terminal is the fast lane — quicker to start, has extra flags and options, can be scripted for automation, and has headless mode (runs a query and exits, no chat interface). Both use the same Claude brain. Start with Desktop App. Graduate to terminal when you want speed. Think of it like Google Maps app vs typing directions — same data, different experience.</div>
+</div>
+
+<!-- Desktop App Exclusives (moved from S3 to S1) -->
+<div class="slide light" data-s="s1">
+  <div class="tag t">App Only</div>
+  <h2>Desktop exclusives</h2>
+  <div class="cards" style="margin-top:16px;">
+    <div class="card" style="border-top:3px solid var(--teal);"><h4>&#128065; Visual Diff Review</h4><p>Side-by-side changes. Click to comment.</p></div>
+    <div class="card" style="border-top:3px solid var(--teal);"><h4>&#127760; Live App Preview</h4><p>Built-in browser. Auto-verifies edits.</p></div>
+    <div class="card" style="border-top:3px solid var(--teal);"><h4>&#128268; Connectors GUI</h4><p>Click to connect. No config files.</p></div>
+    <div class="card" style="border-top:3px solid var(--teal);"><h4>&#128339; Scheduled Tasks</h4><p>Recurring: daily summaries, weekly reports.</p></div>
+  </div>
+  <div class="notes">These only exist in the Desktop App, not the terminal. Visual diff: see changes side by side and comment inline. Live preview: an embedded browser that auto-refreshes when Claude makes changes — great for web development. Connectors: click-to-connect GUI for services, no configuration files needed. Scheduled tasks: set up recurring Claude sessions — like a daily Slack summary, weekly code review, or hourly monitoring. These are the reasons the Desktop App is your primary interface.</div>
+</div>
+
+<!-- NEW: Setup Explained (with Node.js) -->
+<div class="slide dark3" data-s="s1">
+  <div class="tag w">Jargon: Setup</div>
+  <h2>What you installed (and why)</h2>
+  <div class="setup-row" style="margin-top:16px;">
+    <div class="setup-item" style="background:rgba(13,148,136,.08);border:2px solid var(--teal);border-radius:14px;">
+      <div class="sicon">&#128187;</div>
+      <h4 style="color:var(--teal);">Claude Code</h4>
+      <p style="color:rgba(255,255,255,.6);">The agent</p>
+    </div>
+    <div class="setup-item" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:14px;">
+      <div class="sicon">&#9881;</div>
+      <h4 style="color:rgba(255,255,255,.7);">Node.js</h4>
+      <p style="color:rgba(255,255,255,.4);">The engine</p>
+    </div>
+    <div class="setup-item" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:14px;">
+      <div class="sicon">&#128230;</div>
+      <h4 style="color:rgba(255,255,255,.7);">Git</h4>
+      <p style="color:rgba(255,255,255,.4);">Version tracking</p>
+    </div>
+  </div>
+  <div class="notes">Demystify the setup. Three things get installed: (1) Claude Code itself — the AI agent you interact with. (2) Node.js — this is a "runtime," meaning it's the engine that makes Claude Code run on your computer. Think of it like how a car engine makes the car move — you don't interact with the engine, but the car needs it. Node.js is widely used in software (runs Instagram, Netflix, LinkedIn). You'll never need to open or configure Node.js directly. (3) Git — a version tracking system that remembers every version of every file. Think of "Track Changes" in Word but for your entire project. Claude Code uses Git to create save points, undo changes, and track what it modified. You install all three once and forget about them. Claude Code handles Git and Node.js behind the scenes. The Desktop App can also be downloaded directly as an installer.</div>
+</div>
+
+<!-- NEW: Jargon — Database, API, Hosting -->
+<div class="slide light" data-s="s1">
+  <div class="tag t">Jargon: Tech Terms</div>
+  <h2>Words you'll hear Claude use</h2>
+  <div class="cards c4" style="margin-top:16px;">
+    <div class="card" style="border-top:3px solid var(--teal);text-align:center;">
+      <h4 style="font-size:18px;">&#128451; Database</h4>
+      <p style="font-size:13px;color:var(--text3);margin-top:6px;">Smart Excel sheet</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--blue);text-align:center;">
+      <h4 style="font-size:18px;">&#128268; API</h4>
+      <p style="font-size:13px;color:var(--text3);margin-top:6px;">Messenger between apps</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--purple);text-align:center;">
+      <h4 style="font-size:18px;">&#9729; Hosting</h4>
+      <p style="font-size:13px;color:var(--text3);margin-top:6px;">Always-on computer for your app</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--red);text-align:center;">
+      <h4 style="font-size:18px;">&#128683; .gitignore</h4>
+      <p style="font-size:13px;color:var(--text3);margin-top:6px;">Files Git should never push.<br>Always add .env here.</p>
+    </div>
+  </div>
+  <div class="notes">These are terms Claude will use in conversation and you'll encounter in your work. Database: think of it as a giant Excel sheet that apps can read from and write to automatically. When you sign up for an app, your name and email go into a database. When you see a list of products, they come from a database. API (Application Programming Interface): a messenger between apps. When you check weather on your phone, the app sends a request via an API to a weather service, which sends data back. Like a waiter — you tell the waiter your order, the waiter tells the kitchen, the kitchen sends food back through the waiter. Hosting: putting your app on a computer that's always on and connected to the internet so anyone can access it. Like renting a shop in a mall vs selling from your living room. You don't need to master these — just recognize the words when Claude uses them.</div>
+</div>
+
+<!-- Q&A Checkpoint 2 -->
+<div class="slide dark" data-s="s1">
+  <div class="tag w" style="background:rgba(255,255,255,.15);">Checkpoint</div>
+  <h2 style="margin-top:20px;">Questions?</h2>
+  <div class="notes">Another 2-3 minute pause. Ask: "Any questions about the terminal, setup, or the tech terms?" Common questions: "Do I need to learn terminal commands?" — No, Claude Code handles commands for you. The ! prefix lets you run them from chat. "Why do we need Node.js?" — It's the runtime that Claude Code is built on. Install once, never think about it again. "Will I need to know about databases and APIs?" — Not deeply. Claude handles the technical parts. You just need to recognize the words when Claude mentions them.</div>
+</div>
+
+<!-- Jargon: Context Window & Tokens -->
+<div class="slide light" data-s="s1">
+  <div class="tag t">Jargon: How AI Reads</div>
+  <h2>Context Window &amp; Tokens</h2>
+  <div class="vs" style="margin-top:16px;">
+    <div class="vsc" style="border:2px solid var(--teal);text-align:center;">
+      <h4 style="color:var(--teal);">Tokens</h4>
+      <p style="font-size:18px;color:var(--text2);margin-top:12px;">Word fragments. More = more cost.</p>
+    </div>
+    <div class="vsc" style="border:2px solid var(--blue);text-align:center;">
+      <h4 style="color:var(--blue);">Context Window</h4>
+      <p style="font-size:18px;color:var(--text2);margin-top:12px;">AI's working memory. Fills up.</p>
+    </div>
+  </div>
+  <div class="notes">Two terms they'll hear constantly. Tokens: the basic unit AI uses to process text. Not exactly words — AI breaks text into smaller chunks called tokens. Roughly 1 word = 1.3 tokens. Every token costs money (fractions of a cent). Every file Claude reads, every command it runs, every response it gives — all measured in tokens. Context window: think of it as Claude's short-term working memory. It has a fixed capacity (measured in tokens). Everything in the conversation takes up space: your prompts, Claude's responses, file contents it read, command outputs. When the context fills up, Claude starts losing track of earlier information. This is why /compact and starting fresh matter — they free up context space. Claude Code uses more context than regular chat because it reads entire files and runs commands.</div>
+</div>
+
+<!-- Context fills up -->
+<div class="slide dark2" data-s="s1">
+  <div class="tag w">Good to Know</div>
+  <h2>Conversations fill up.</h2>
+  <div style="display:flex;gap:40px;justify-content:center;align-items:end;margin-top:24px;">
+    <div style="text-align:center;">
+      <div class="glass"><div class="glass-fill" style="height:25%;background:linear-gradient(to top,var(--teal),rgba(13,148,136,.3));"></div></div>
+      <p style="font-size:14px;color:rgba(255,255,255,.6);margin-top:8px;">New chat<br><strong style="color:var(--green);">Fast</strong></p>
+    </div>
+    <div style="text-align:center;">
+      <div class="glass"><div class="glass-fill" style="height:65%;background:linear-gradient(to top,var(--amber),rgba(245,158,11,.3));"></div></div>
+      <p style="font-size:14px;color:rgba(255,255,255,.6);margin-top:8px;">After a while<br><strong style="color:var(--amber);">Slower</strong></p>
+    </div>
+    <div style="text-align:center;">
+      <div class="glass"><div class="glass-fill" style="height:95%;background:linear-gradient(to top,var(--red),rgba(220,38,38,.3));"></div></div>
+      <p style="font-size:14px;color:rgba(255,255,255,.6);margin-top:8px;">Too long<br><strong style="color:var(--red);">Confused</strong></p>
+    </div>
+  </div>
+  <div class="cards" style="margin-top:18px;max-width:700px;">
+    <div class="card" style="text-align:center;"><h4><code style="font-family:'Fira Code';color:var(--amber);">/context</code></h4><p>Check</p></div>
+    <div class="card" style="text-align:center;"><h4><code style="font-family:'Fira Code';color:#34D399;">/compact</code></h4><p>Free space</p></div>
+    <div class="card" style="text-align:center;"><h4>Start fresh</h4><p>Reset</p></div>
+  </div>
+  <div class="notes">Claude Code reads entire files, runs commands, accumulates a LOT of context. The "glass" fills up faster than regular chat. When full, Claude gets confused or forgetful. Three tools: /context shows a visual grid — each block represents a piece of the conversation, colored by type (your messages, Claude's responses, file reads, tool outputs). It shows you exactly how full the context window is, like a fuel gauge. When it's getting full: /compact summarizes the conversation so far and frees space — keeps the important info, discards the details. Or start a fresh conversation for a completely clean slate. Rule of thumb: run /context periodically, /compact when it's getting crowded, start fresh when even /compact isn't enough.</div>
+</div>
+
+<!-- Session 1 Recap -->
+<div class="slide teal" data-s="s1">
+  <h2>Session 1 Recap</h2>
+  <div style="text-align:left;max-width:600px;margin-top:20px;">
+    <p style="font-size:20px;line-height:2;color:rgba(255,255,255,.9);">
+      <strong style="color:white;">Agent, not chatbot</strong> &#8212; acts on your files<br>
+      <strong style="color:white;">6 tools</strong> &#8212; Read, Edit, Write, Bash, Search, MCP<br>
+      <strong style="color:white;">Screenshot</strong> &#8212; show, don't describe<br>
+      <strong style="color:white;">Permissions</strong> &#8212; you approve every change<br>
+      <strong style="color:white;">4 Modes</strong> &#8212; Ask, Auto accept, Plan, Bypass<br>
+      <strong style="color:white;">Desktop App</strong> primary, Terminal secondary<br>
+      <strong style="color:white;">Escape</strong> stops it. <strong style="color:white;">/compact</strong> frees memory.
+    </p>
+  </div>
+  <div class="notes">Six key takeaways. Claude Code is an agent that takes action, not a chatbot that talks. It has 6 tools (Read, Edit, Write, Bash, Search, MCP). Screenshots are your most powerful input — show, don't describe. The permission system keeps you in control. Desktop App is your primary interface, terminal for power users. Escape stops Claude anytime, /compact frees memory.</div>
+</div>
+
+<!-- Try It Now -->
+<div class="slide teal" data-s="s1">
+  <div class="tag w" style="background:rgba(255,255,255,.2);">Hands-On</div>
+  <h2 style="margin-top:16px;">Try it now. On your laptop.</h2>
+  <div style="text-align:left;max-width:600px;margin-top:20px;">
+    <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:16px;">
+      <span style="font-size:24px;font-weight:800;color:rgba(255,255,255,.3);">1</span>
+      <p style="font-size:17px;color:rgba(255,255,255,.9);">Paste a screenshot and ask it to help you proceed</p>
+    </div>
+    <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:16px;">
+      <span style="font-size:24px;font-weight:800;color:rgba(255,255,255,.3);">2</span>
+      <p style="font-size:17px;color:rgba(255,255,255,.9);">Take control of your browser using Claude in Chrome</p>
+    </div>
+    <div style="display:flex;align-items:baseline;gap:12px;">
+      <span style="font-size:24px;font-weight:800;color:rgba(255,255,255,.3);">3</span>
+      <p style="font-size:17px;color:rgba(255,255,255,.9);">Search the web and make a webpage with today's news</p>
+    </div>
+  </div>
+  <p style="font-size:13px;color:rgba(255,255,255,.35);margin-top:20px;">5 minutes. Ask for help if stuck.</p>
+  <div class="notes">Give them 10 minutes. Walk around the room. Help anyone who's stuck. Three tasks, each showcasing a different superpower: (1) Screenshot — paste any screenshot into Claude Code and ask it to help. This shows Claude's multimodal understanding. (2) Claude in Chrome — install the Chrome extension and let Claude control the browser. It can read pages, click buttons, fill forms. Mind-blowing for beginners. (3) Web search + webpage — ask Claude to search the web for today's news and create an HTML page. This demonstrates tool use, web access, and file creation in one task. Let people explore at their own pace. If someone finishes early, suggest they try combining tasks.</div>
+</div>
+
+<!-- ════════════════ SESSION 2: MEMORY & WORKFLOW ════════════════ -->
+<div class="slide blue" data-s="s2">
+  <div class="tag w">Session 2</div>
+  <h1>Memory &amp;<br>Workflow</h1>
+  <p class="sub" style="margin-top:10px;">CLAUDE.md, skills, memory, and workflows.</p>
+  <div class="notes">Session 2 covers the features that make you PRODUCTIVE with Claude Code. We'll cover how to give Claude persistent rules (CLAUDE.md), how to pick the right AI model, how to use reusable workflows (skills), and version control. None of these exist in Claude chat.</div>
+</div>
+
+<!-- 3 Magic Prefixes -->
+<div class="slide light" data-s="s2">
+  <div class="tag b">Three Shortcuts</div>
+  <h2>/ &nbsp; @ &nbsp; !</h2>
+  <div class="cards c3" style="margin-top:16px;">
+    <div class="card" style="text-align:center;border-top:3px solid var(--teal);">
+      <h4><span class="prefix slash" style="font-size:28px;">/</span></h4>
+      <p style="margin-top:8px;"><strong>Commands</strong><br><span style="font-size:12px;color:var(--text3);">/compact /context /plan</span></p>
+      <p style="font-size:10px;color:var(--text3);margin-top:4px;">App + Terminal</p>
+    </div>
+    <div class="card" style="text-align:center;border-top:3px solid var(--blue);">
+      <h4><span class="prefix at" style="font-size:28px;">@</span></h4>
+      <p style="margin-top:8px;"><strong>Files</strong><br><span style="font-size:12px;color:var(--text3);">@report.pdf @app.tsx</span></p>
+      <p style="font-size:10px;color:var(--text3);margin-top:4px;">App + Terminal</p>
+    </div>
+    <div class="card" style="text-align:center;border-top:3px solid var(--amber);">
+      <h4><span class="prefix bang" style="font-size:28px;">!</span></h4>
+      <p style="margin-top:8px;"><strong>Run command</strong><br><span style="font-size:12px;color:var(--text3);">!npm test !ls</span></p>
+      <p style="font-size:10px;color:var(--text3);margin-top:4px;">App + Terminal</p>
+    </div>
+  </div>
+  <div class="notes">Three prefixes unique to Claude Code. Slash (/) for built-in commands — your toolkit. At (@) for referencing specific files — type @ and start typing a filename, it autocompletes. Super useful when you want Claude to look at a specific file. Exclamation (!) runs a shell command and feeds the output to Claude — like !npm test shows Claude the test results so it can analyze them. None of these exist in regular Claude chat. These are your daily shortcuts — memorize them.</div>
+</div>
+
+<!-- What is Markdown? -->
+<div class="slide light" data-s="s2">
+  <div class="tag b">Jargon: Markdown</div>
+  <h2>What is a <code style="font-family:'Fira Code';font-size:32px;background:#EFF6FF;padding:2px 12px;border-radius:8px;color:var(--blue);">.md</code> file?</h2>
+  <div class="vs" style="margin-top:16px;max-width:750px;">
+    <div class="vsc" style="background:rgba(37,99,235,.04);border:2px solid var(--blue);text-align:left;">
+      <h4 style="color:var(--blue);margin-bottom:8px;">What you type</h4>
+      <pre style="font-size:14px;font-family:'Fira Code',monospace;line-height:1.7;color:var(--text);"># Heading
+## Smaller heading
+
+**Bold text**
+*Italic text*
+
+- Bullet point
+- Another point
+
+`code snippet`</pre>
+    </div>
+    <div class="vsc" style="background:#F9FAFB;border:1px solid var(--border);text-align:left;">
+      <h4 style="color:var(--text3);margin-bottom:8px;">What it looks like</h4>
+      <div style="font-size:14px;line-height:1.7;color:var(--text);">
+        <h3 style="font-size:20px;margin-bottom:2px;">Heading</h3>
+        <h4 style="font-size:16px;margin-bottom:6px;">Smaller heading</h4>
+        <p><strong>Bold text</strong></p>
+        <p><em>Italic text</em></p>
+        <p>&#8226; Bullet point<br>&#8226; Another point</p>
+        <p><code style="font-family:'Fira Code';font-size:12px;background:#F3F4F6;padding:2px 6px;border-radius:4px;">code snippet</code></p>
+      </div>
+    </div>
+  </div>
+  <p style="font-size:14px;color:var(--text2);margin-top:12px;">Plain text with simple formatting. Used for <strong>README</strong>, <strong>CLAUDE.md</strong>, <strong>SKILL.md</strong>, docs.</p>
+  <p style="font-size:13px;color:var(--text3);margin-top:6px;">Why not Word or PDF? Markdown is lightweight, works in any text editor, readable by AI, and tracked by Git. No special software needed.</p>
+  <div class="notes">Markdown is the language of Claude Code configuration. Before showing CLAUDE.md, explain Markdown — many non-technical users have never seen it. Markdown (.md) is a simple way to format plain text. You write # for headings, ** for bold, * for italic, - for bullet points. That's it. No complicated software needed — any text editor works. Why it matters for Claude Code: CLAUDE.md (your rules), SKILL.md (skills), README.md (project docs) — all use Markdown. GitHub, Notion, Slack, Discord all support Markdown too. It's the universal formatting language of tech. The key insight: it's just text with a few symbols. If they can write a WhatsApp message, they can write Markdown.</div>
+</div>
+
+<!-- CLAUDE.md (merged with example) -->
+<div class="slide dark3" data-s="s2">
+  <div class="tag w">Core Feature</div>
+  <h2>CLAUDE.md</h2>
+  <div class="vs" style="margin-top:12px;">
+    <div class="vsc" style="background:rgba(37,99,235,.06);border:1px solid rgba(37,99,235,.2);flex:0.9;">
+      <h4 style="color:var(--blue);">What It Is</h4>
+      <pre style="color:rgba(255,255,255,.7);font-size:16px;">Your rules file.
+Claude reads it every session.</pre>
+      <p style="font-size:12px;color:var(--blue);margin-top:10px;"><code style="font-family:'Fira Code';color:var(--blue);background:rgba(37,99,235,.15);padding:2px 6px;border-radius:4px;">/init</code> to generate <span style="font-size:10px;color:rgba(255,255,255,.3);">App + Terminal</span></p>
+    </div>
+    <div class="vsc" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);flex:1.1;">
+      <h4 style="color:rgba(255,255,255,.4);">Example</h4>
+      <pre style="color:rgba(255,255,255,.6);font-size:13px;font-family:'Fira Code',monospace;line-height:1.7;"><span style="color:#64748B;"># CLAUDE.md</span>
+
+<span style="color:#34D399;">## Project</span>
+Wiom dashboard. Next.js, Tailwind.
+
+<span style="color:#34D399;">## Rules</span>
+- Components in src/components/
+- Use existing Button for CTAs
+- Indian number formatting
+
+<span style="color:#34D399;">## Commands</span>
+- Build: npm run build
+- Test: npm test</pre>
+    </div>
+  </div>
+  <div class="notes">CLAUDE.md is THE most important Claude Code feature. It's a plain text file that Claude reads automatically before every session. Put your project rules here: tech stack, naming conventions, style guidelines, build commands. You write it once and Claude follows it every time. /init auto-generates one by analyzing your project — it's the FIRST thing you should run in any new project. In Claude chat, you'd have to repeat all this context every single conversation. Demo: open a CLAUDE.md, add a rule like "Always use British English," then ask Claude to write something. Watch it follow the rule.</div>
+</div>
+
+<!-- CLAUDE.md Hierarchy -->
+<div class="slide light" data-s="s2">
+  <div class="tag b">Three Levels</div>
+  <h2>CLAUDE.md Hierarchy</h2>
+  <div class="layers" style="margin-top:18px;">
+    <div class="layer" style="background:var(--blue);">&#127760; Global &#8212; All your projects &#8212; ~/.claude/CLAUDE.md</div>
+    <div class="layer" style="background:#3B82F6;">&#128193; Project &#8212; Shared with team &#8212; ./CLAUDE.md</div>
+    <div class="layer" style="background:#93C5FD;color:var(--text);">&#128196; Rules &#8212; By topic &#8212; .claude/rules/*.md</div>
+  </div>
+  <p style="font-size:13px;color:var(--text2);margin-top:10px;">More specific rules override general ones. <span style="font-size:10px;color:var(--text3);">App + Terminal</span></p>
+  <div class="notes">Three levels of CLAUDE.md. Global: your personal preferences applied everywhere — "always use English," "I prefer concise answers." This lives in your home directory. Project: project-specific rules committed to git and shared with your team — "use React," "components go in src/." Rules folder: modular topic-specific rules — security.md, testing.md, design.md. Claude loads all three levels automatically, every session. Rules at the bottom are the most specific and override rules above them when there's a conflict. Think of it as layering: your global preferences form the base, project rules add on top, and topic-specific rules in .claude/rules/ are the final layer.</div>
+</div>
+
+<!-- Auto-memory -->
+<div class="slide light" data-s="s2">
+  <div class="tag b">Automatic</div>
+  <h2>Claude remembers.</h2>
+  <div class="callout cb" style="margin-top:16px;">
+    Claude saves notes about your project automatically.<br>
+    Next session, it <strong>remembers</strong> what it learned.
+  </div>
+  <div class="cards" style="margin-top:14px;max-width:600px;">
+    <div class="card" style="border-top:3px solid var(--blue);text-align:center;">
+      <h4>CLAUDE.md</h4>
+      <p>Rules <strong>you</strong> write</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--purple);text-align:center;">
+      <h4>Auto-memory</h4>
+      <p>Notes <strong>Claude</strong> writes</p>
+    </div>
+  </div>
+  <p style="font-size:14px;color:var(--text2);margin-top:12px;">Stored in <code style="font-family:'Fira Code';font-size:13px;background:#EFF6FF;padding:2px 8px;border-radius:4px;color:var(--blue);">.claude/memory/</code> — human-readable Markdown</p>
+  <div class="notes">Completely automatic. As Claude works on your project, it saves notes: which build command works, what patterns your codebase uses, debugging insights. Next time you open the project, Claude loads these automatically. It builds institutional knowledge over time. KEY DISTINCTION: CLAUDE.md is rules YOU write for Claude to follow. Auto-memory is notes CLAUDE writes about your project. They complement each other. The memory is stored as a Markdown file in .claude/memory/ — it's human-readable and you can edit it directly. Totally unique to Claude Code — chat starts from zero every time.</div>
+</div>
+
+
+<!-- Skills -->
+<div class="slide light" data-s="s2">
+  <div class="tag b">Reusable Workflows</div>
+  <h2>Skills = saved workflows</h2>
+  <div class="cards" style="margin-top:16px;max-width:700px;">
+    <div class="card" style="border-top:3px solid var(--blue);"><h4>/commit</h4><p>Auto-generates a commit message</p></div>
+    <div class="card" style="border-top:3px solid var(--blue);"><h4>/simplify</h4><p>Simplifies and cleans up code</p></div>
+    <div class="card" style="border-top:3px solid var(--blue);"><h4>/debug</h4><p>Systematic troubleshooting</p></div>
+    <div class="card" style="border-top:3px solid var(--blue);"><h4>/batch</h4><p>Same change across many files</p></div>
+  </div>
+  <p style="font-size:13px;color:var(--text2);margin-top:10px;">Custom skills: create your own in <code style="font-family:'Fira Code';font-size:12px;">.claude/skills/</code> <span style="font-size:10px;color:var(--text3);">All skills: App + Terminal</span></p>
+  <p style="font-size:12px;color:var(--text3);margin-top:4px;">How? Ask Claude: <em>"Create a skill that [does X]"</em></p>
+  <div class="notes">Skills are reusable workflows unique to Claude Code. Think of them as saved procedures you invoke with a slash command. /commit creates a git commit with an auto-generated message. /simplify reviews and cleans up code. /debug troubleshoots issues systematically. /batch runs the same transformation across many files — up to 10x faster than individual prompts. Type / and browse the menu to see all available skills. You can create custom skills as SKILL.md files. Teams can share skills via plugins.</div>
+</div>
+
+<!-- Skill Creator -->
+<div class="slide dark3" data-s="s2">
+  <div class="tag w">Build Your Own</div>
+  <h2>Create custom skills</h2>
+  <div class="app-mock" style="margin-top:14px;">
+    <div class="app-titlebar"><div class="app-dot r"></div><div class="app-dot y"></div><div class="app-dot g"></div><span>Claude Code</span></div>
+    <div class="app-body">
+      <div class="user-msg"><div class="label">You</div>Create a skill that generates a weekly status report from my Git commits and sends it to Slack</div>
+      <div class="tool-use"><div class="tl">&#128221; Write</div>Creating .claude/skills/weekly-report/SKILL.md</div>
+      <div class="claude-msg"><div class="label">Claude</div>Done. Run <code style="font-family:'Fira Code';color:#34D399;">/weekly-report</code> anytime to generate and send.</div>
+    </div>
+  </div>
+  <div style="margin-top:16px;max-width:720px;">
+    <div class="cards" style="max-width:720px;">
+      <div class="card" style="border-top:3px solid var(--teal);text-align:center;">
+        <h4>&#128172; Describe it</h4>
+        <p>"Create a skill that [does X]"</p>
+      </div>
+      <div class="card" style="border-top:3px solid var(--blue);text-align:center;">
+        <h4>&#128230; Claude builds it</h4>
+        <p>Saves as SKILL.md file</p>
+      </div>
+      <div class="card" style="border-top:3px solid var(--purple);text-align:center;">
+        <h4>&#9889; Use with /name</h4>
+        <p>Invoke anytime with /</p>
+      </div>
+    </div>
+  </div>
+  <p style="font-size:12px;color:rgba(255,255,255,.35);margin-top:10px;">Skills live in <code style="font-family:'Fira Code';font-size:11px;color:rgba(255,255,255,.4);">.claude/skills/</code> &mdash; share with your team via Git <span style="font-size:10px;color:rgba(255,255,255,.25);">App + Terminal</span></p>
+  <div class="notes">This is the magic of Claude Code's extensibility. You don't need to code skills yourself — just describe what you want in plain English and Claude creates the skill for you. A skill is just a SKILL.md file — a Markdown document with instructions that Claude follows when you invoke it. Three steps: (1) Tell Claude what you want the skill to do. Be specific about inputs, steps, and outputs. (2) Claude creates the SKILL.md file in .claude/skills/your-skill-name/. (3) Now you can invoke it anytime with /your-skill-name. Examples: "Create a skill that reviews my code for security issues." "Create a skill that generates API documentation from my code." "Create a skill that creates a daily standup summary from Slack." Skills are shareable — commit them to Git and your whole team gets them. They're the building blocks for automating your workflow.</div>
+</div>
+
+<!-- Why Skill Creator is Powerful -->
+<div class="slide dark" data-s="s2">
+  <div class="tag w">Game Changer</div>
+  <h2 style="font-size:34px;"><code style="font-family:'Fira Code';font-size:32px;color:var(--amber);">/skill-creator</code></h2>
+  <p class="sub" style="margin-top:8px;max-width:700px;">The skill that creates other skills.</p>
+  <div class="callout" style="background:rgba(245,158,11,.06);border-left-color:var(--amber);margin-top:20px;max-width:700px;">
+    <strong style="color:var(--amber);">Why this changes everything:</strong><br><br>
+    You don't need to be technical to automate your work.<br>
+    Describe what you want in plain English. Claude builds the automation.<br>
+    Next time, just type <code style="font-family:'Fira Code';background:rgba(255,255,255,.08);padding:2px 6px;border-radius:4px;">/your-skill</code> and it runs.
+  </div>
+  <div class="cards c3" style="margin-top:16px;max-width:750px;">
+    <div class="card" style="text-align:center;border-top:3px solid var(--teal);">
+      <h4 style="font-size:28px;">&#128200;</h4>
+      <p style="font-size:13px;"><strong>Weekly report</strong><br>from Git + Slack</p>
+    </div>
+    <div class="card" style="text-align:center;border-top:3px solid var(--blue);">
+      <h4 style="font-size:28px;">&#128221;</h4>
+      <p style="font-size:13px;"><strong>Draft email</strong><br>from meeting notes</p>
+    </div>
+    <div class="card" style="text-align:center;border-top:3px solid var(--purple);">
+      <h4 style="font-size:28px;">&#128202;</h4>
+      <p style="font-size:13px;"><strong>Data cleanup</strong><br>for messy CSVs</p>
+    </div>
+  </div>
+  <div class="callout" style="background:rgba(255,255,255,.04);border-left-color:rgba(255,255,255,.2);margin-top:14px;max-width:700px;font-size:14px;">
+    <strong style="color:rgba(255,255,255,.7);">&#128161; Why /skill-creator instead of just asking Claude?</strong><br>
+    Asking Claude works once. A skill works <strong>every time</strong>.<br>
+    /skill-creator follows a proven structure, adds proper metadata,<br>
+    handles edge cases, and makes it reusable with one command.
+  </div>
+  <p style="font-size:13px;color:rgba(255,255,255,.35);margin-top:10px;">One person creates it. Whole team uses it. Shared via Git.</p>
+  <div class="notes">This is arguably the most powerful feature for non-technical users. The skill creator lets ANYONE build automations without writing code. Think about what your team does repeatedly: formatting reports, cleaning up data, drafting communications, checking for errors. Each of these can become a skill. The magic: (1) You describe it once in plain English. (2) Claude builds the SKILL.md file — a Markdown document with step-by-step instructions. (3) Anyone on the team can run it with /skill-name. It's like recording a macro in Excel, but for any task. And it's shareable — commit the skill to Git and your entire team gets it. Real examples from Wiom: a skill that pulls weekly metrics and formats them for Slack, a skill that checks CLAUDE.md files for consistency, a skill that generates standup updates from recent activity. The skill creator is the bridge between "I use Claude Code" and "I've automated my workflow with Claude Code."</div>
+</div>
+
+<!-- Session 2 Recap -->
+<div class="slide blue" data-s="s2">
+  <h2>Session 2 Recap</h2>
+  <div style="text-align:left;max-width:600px;margin-top:20px;">
+    <p style="font-size:20px;line-height:2;color:rgba(255,255,255,.9);">
+      <strong style="color:white;">/ @ !</strong> &#8212; commands, files, run<br>
+      <strong style="color:white;">CLAUDE.md</strong> &#8212; your rules, read every session<br>
+      <strong style="color:white;">Auto-memory</strong> &#8212; Claude's notes, automatic<br>
+      <strong style="color:white;">Markdown</strong> &#8212; plain text formatting for .md files<br>
+      <strong style="color:white;">Skills</strong> &#8212; /commit, /simplify, /debug, /batch
+    </p>
+  </div>
+  <div class="notes">All Claude Code exclusive features. Three prefixes for daily shortcuts. CLAUDE.md for persistent rules — write once, followed every session. Auto-memory for automatic learning — Claude saves notes about your project on its own. Two models to choose from — start with Sonnet, upgrade to Opus when needed. Skills for reusable workflows. None of these are available in Claude chat.</div>
+</div>
+
+<!-- Session 2 Try It Now -->
+<div class="slide blue" data-s="s2">
+  <div class="tag w" style="background:rgba(255,255,255,.2);">Hands-On</div>
+  <h2 style="margin-top:16px;">Try it now. On your laptop.</h2>
+  <div style="text-align:left;max-width:620px;margin-top:24px;">
+    <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:20px;">
+      <span style="font-size:24px;font-weight:800;color:rgba(255,255,255,.3);">1</span>
+      <p style="font-size:17px;color:rgba(255,255,255,.9);">Build your own <strong>CLAUDE.md</strong> file<br><span style="font-size:13px;color:rgba(255,255,255,.5);">Run <code style="font-family:'Fira Code';background:rgba(255,255,255,.1);padding:2px 8px;border-radius:4px;">/init</code> in any project folder, then customize the rules</span></p>
+    </div>
+    <div style="display:flex;align-items:baseline;gap:12px;">
+      <span style="font-size:24px;font-weight:800;color:rgba(255,255,255,.3);">2</span>
+      <p style="font-size:17px;color:rgba(255,255,255,.9);">Create a skill using <strong>/skill-creator</strong><br><span style="font-size:13px;color:rgba(255,255,255,.5);">Tell Claude what you want automated — it builds the skill for you</span></p>
+    </div>
+  </div>
+  <p style="font-size:13px;color:rgba(255,255,255,.35);margin-top:24px;">5 minutes. Ask for help if stuck.</p>
+  <div class="notes">Two hands-on exercises. (1) Build a CLAUDE.md: have them run /init in any project folder. It auto-generates a CLAUDE.md based on the project. Then ask them to add at least one custom rule — like "always write comments in English" or "use async/await not callbacks." This teaches them the most important Claude Code feature by doing it. (2) Create a skill: ask them to type something like "Create a skill that summarizes all files in a folder" or "Create a skill that checks my code for TODO comments." Claude will create a SKILL.md file. Then they can invoke it with /skill-name. This shows the extensibility of Claude Code — you're not limited to built-in features. Walk around, help anyone stuck. Common issue: they might not have a project folder open — help them navigate to one first.</div>
+</div>
+
+<!-- ════════════════ SESSION 3: ECOSYSTEM ════════════════ -->
+<div class="slide purple" data-s="s3">
+  <div class="tag w">Session 3</div>
+  <h1>Ecosystem</h1>
+  <p class="sub" style="margin-top:10px;">Connected tools, browser control, version control, and more.</p>
+  <div class="notes">Session 3 is where Claude Code becomes more than a coding assistant. It connects to your tools, controls browsers, has a version control safety net, scales with sub-agents, and extends through plugins. All unique to Claude Code.</div>
+</div>
+
+<!-- Connected Tools -->
+<div class="slide dark" data-s="s3">
+  <div class="big">Claude Code talks to your tools.</div>
+  <p class="sub" style="margin-top:14px;">Slack. Calendar. Gmail. Figma. Drive. Canva.</p>
+  <div class="demo-badge">&#127916; Live demo &mdash; "What's on my calendar tomorrow?"</div>
+  <div class="notes">START WITH A LIVE DEMO. Type something like "What's on my calendar tomorrow?" or "Summarize the last 10 messages in #general on Slack." Let them see it work before explaining how. These connections use MCP — the Model Context Protocol. In the Desktop App, you set up connections through the Connectors panel — click to connect, no config files needed. In the terminal, you can manage MCP connections with the /mcp command or by editing .claude/settings.json.</div>
+</div>
+
+<!-- Connected Tools Grid -->
+<div class="slide light" data-s="s3">
+  <div class="tag p">Already Set Up</div>
+  <h2>Your connected tools <span style="font-size:12px;font-weight:400;color:var(--text3);">App + Terminal (setup easier in App)</span></h2>
+  <div class="igrid" style="margin-top:16px;">
+    <div class="ibox"><img src="logos/slack.svg" alt="Slack" style="width:44px;height:44px;"><div class="ilabel">Slack</div><div class="idesc">Read, send, search</div></div>
+    <div class="ibox"><img src="logos/googlecalendar.svg" alt="Calendar" style="width:44px;height:44px;"><div class="ilabel">Calendar</div><div class="idesc">Events, free time</div></div>
+    <div class="ibox"><img src="logos/gmail.svg" alt="Gmail" style="width:44px;height:44px;"><div class="ilabel">Gmail</div><div class="idesc">Search, read, draft</div></div>
+    <div class="ibox"><img src="logos/figma.svg" alt="Figma" style="width:44px;height:44px;"><div class="ilabel">Figma</div><div class="idesc">Design context</div></div>
+    <div class="ibox"><img src="logos/googledrive.svg" alt="Drive" style="width:44px;height:44px;"><div class="ilabel">Drive</div><div class="idesc">Search documents</div></div>
+    <div class="ibox"><img src="logos/canva.svg" alt="Canva" style="width:44px;height:44px;"><div class="ilabel">Canva</div><div class="idesc">Generate designs</div></div>
+  </div>
+  <div class="notes">These are configured for your team. In the Desktop App, go to the Connectors panel to see all connected tools. You can add new ones through the visual interface — no config files needed. Just ask Claude to do something and it picks the right tool automatically. Each connection gives Claude new capabilities — Slack adds tools for sending messages, searching channels, reading threads. You can also use /mcp in the terminal to manage connections.</div>
+</div>
+
+<!-- How to Connect Tools -->
+<div class="slide light" data-s="s3">
+  <div class="tag p">Setup</div>
+  <h2>How to connect a tool</h2>
+  <div style="background:linear-gradient(135deg,#f3e8ff,#ede9fe);border-radius:16px;padding:24px 40px;border:1px solid #ddd6fe;margin-top:16px;max-width:500px;">
+    <div style="display:flex;flex-direction:column;gap:14px;align-items:center;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span style="background:var(--purple);color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;">1</span>
+        <span style="font-size:16px;">Click <strong>Customize</strong> in sidebar</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span style="background:var(--purple);color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;">2</span>
+        <span style="font-size:16px;">Find the tool, click <strong>Connect</strong></span>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span style="background:var(--purple);color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;">3</span>
+        <span style="font-size:16px;">Sign in with your account (OAuth)</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span style="background:var(--green);color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;">&#10003;</span>
+        <span style="font-size:16px;">Done. Claude can now use it.</span>
+      </div>
+    </div>
+  </div>
+  <p style="font-size:15px;color:var(--purple);margin-top:16px;font-weight:600;">Try it &mdash; connect a tool on your laptop now.</p>
+  <div class="notes">Walk through the setup flow. In the Desktop App it's visual — click Connectors in the sidebar, find the tool you want, click Connect. It opens an OAuth login (sign in with your Google/Slack/etc account). Once authorized, Claude immediately has access. In the terminal, /mcp lists your connections, /mcp add [name] adds a new one — same OAuth flow, just opens in your browser. Key point: you don't need to learn the tools. Once connected, just ask Claude naturally — "search my Gmail for invoices from last week" — and it picks the right connector automatically. No API keys, no config files, no code.</div>
+</div>
+
+<!-- Terminology Map -->
+<div class="slide light" data-s="s3">
+  <div class="tag p">Before We Go Deeper</div>
+  <h2>5 terms. How they relate.</h2>
+  <div style="max-width:800px;width:100%;margin:16px auto;">
+    <table class="stbl">
+      <thead><tr><th>Term</th><th>What It Is</th><th>Analogy</th></tr></thead>
+      <tbody>
+        <tr><td style="color:var(--purple);font-weight:700;">API</td><td>How apps talk to each other (the plumbing)</td><td>The waiter between you and the kitchen</td></tr>
+        <tr><td style="color:var(--purple);font-weight:700;">MCP</td><td>Universal standard built on APIs</td><td>USB standard</td></tr>
+        <tr><td style="color:var(--purple);font-weight:700;">Connector</td><td>One service connected via MCP</td><td>A USB cable to a specific device</td></tr>
+        <tr><td style="color:var(--purple);font-weight:700;">Skill</td><td>A reusable / command (like /commit, /debug)</td><td>A saved macro in Excel</td></tr>
+        <tr><td style="color:var(--purple);font-weight:700;">Plugin</td><td>Bundle of skills + agents + hooks + connectors</td><td>A Chrome extension</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout cp" style="margin-top:12px;font-size:15px;">
+    <strong>Bottom to top:</strong> APIs are the plumbing. MCP standardizes them. Connectors link one service. Skills automate one workflow. Plugins bundle everything.
+  </div>
+  <div class="notes">This slide clears up the terminology BEFORE diving into MCP details. Walk through each row. MCP = the universal standard, like how USB is a standard. A Connector = one specific connection built on MCP, like how a USB cable connects to a specific device (Slack connector, Gmail connector). A Skill = a reusable slash command — /commit, /debug, /skill-creator. Like a saved macro in Excel — you run it and it does a sequence of steps. A Plugin = a bundle that can contain skills, custom agents, hooks (auto-triggers), and connectors — all packaged together. Like a Chrome extension that adds multiple features at once. API = Application Programming Interface — the underlying way apps communicate. MCP uses APIs internally but abstracts them away so you don't have to deal with raw API calls. The key insight: you'll mostly interact with connectors (click to connect in the App) and skills (type / commands). MCP and APIs work behind the scenes.</div>
+</div>
+
+<!-- Chrome Plugin & Browser Control (moved after 5 terms) -->
+<div class="slide dark2" data-s="s3">
+  <div class="tag w">Browser Control</div>
+  <h2>Claude can use a browser.</h2>
+  <div class="cards" style="margin-top:16px;max-width:700px;">
+    <div class="card" style="border-top:3px solid var(--purple);"><h4>&#127760; Claude in Chrome</h4><p>Install the Chrome extension. Claude can read pages, click buttons, fill forms, and take screenshots of websites.</p></div>
+    <div class="card" style="border-top:3px solid var(--purple);"><h4>&#128296; Playwright (Automated)</h4><p>Claude can control a headless browser — test websites, scrape data, verify your app works correctly. No extension needed.</p></div>
+  </div>
+  <p style="font-size:13px;color:rgba(255,255,255,.4);margin-top:12px;max-width:600px;"><strong>Jargon:</strong> "Headless browser" = a browser that runs invisibly, controlled by code instead of a human clicking.</p>
+  <div class="notes">Claude can interact with the web, not just your files. Claude in Chrome: install the Chrome extension and Claude can see and interact with web pages — read content, click buttons, fill forms, take screenshots. Playwright: automated browser control without a visible window. Claude can test websites, scrape data, or verify your app works. Both are powerful but not needed in week one.</div>
+</div>
+
+<!-- Sub-agents & Plugins (merged) -->
+<div class="slide light" data-s="s3">
+  <div class="tag p">Scaling Up</div>
+  <h2>Sub-agents &amp; Plugins</h2>
+  <div class="vs" style="margin-top:16px;">
+    <div class="vsc gp">
+      <h4 style="color:var(--purple);">Sub-agents (Automatic)</h4>
+      <pre style="font-size:14px;">Complex task?
+Claude splits work across
+parallel helpers automatically.
+
+You'll see multiple progress
+indicators in Desktop App.</pre>
+      <p style="font-size:12px;color:var(--text2);margin-top:8px;">You don't create them — Claude spawns them when needed.</p>
+    </div>
+  </div>
+  <p style="font-size:13px;color:var(--text2);margin-top:10px;"><strong>Ctrl+B</strong> = background a running task &middot; <strong>Hooks</strong> = scripts that trigger automatically (e.g., lint on every edit)</p>
+  <div class="notes">Two scaling concepts. Sub-agents: for complex tasks, Claude automatically splits work across parallel helper agents. You'll see multiple progress indicators in the Desktop App. You don't create or manage them — Claude decides when to use them. Press Ctrl+B to push a running task to the background while you do something else. Plugins: bundles of skills (new / commands), custom agents, hooks (automation triggers), and MCP connections. Think of them like Chrome extensions or VS Code extensions. Use /plugin to browse and install. Hooks are scripts that fire at specific moments — before a tool runs, after a tool runs, when a session starts. Teams use hooks to enforce standards automatically. Both are advanced — you'll encounter them as your usage grows.</div>
+</div>
+
+<!-- What's Next (Advanced Teaser) -->
+<div class="slide dark3" data-s="s3">
+  <div class="tag w">When You're Ready</div>
+  <h2>There's more to explore</h2>
+  <div class="cards" style="margin-top:16px;max-width:700px;">
+    <div class="card"><h4>&#128230; Build plugins</h4><p>Create shareable skill bundles</p></div>
+    <div class="card"><h4>&#129302; Agent teams</h4><p>Multiple Claude instances coordinating on large tasks</p></div>
+  </div>
+  <p style="font-size:14px;color:rgba(255,255,255,.4);margin-top:14px;">Advanced features. Explore when the basics feel natural.</p>
+  <div class="notes">Power-user features you'll grow into. Headless mode: run Claude with just a query and get output — no chat interface, great for automation and scripting. Custom hooks for enforcing team standards automatically. Building your own plugins to share skills with the team. Agent teams: multiple independent Claude instances coordinating via a shared mailbox — experimental but powerful for large projects. None of these are needed in week one. The best path: master Sessions 1-2 basics, then explore these as natural curiosity kicks in.</div>
+</div>
+
+<!-- ──── BUILDING & HOSTING SECTION ──── -->
+<div class="slide purple" data-s="s3">
+  <div class="tag w">Section</div>
+  <h1>Building &amp;<br>Hosting</h1>
+  <p class="sub" style="margin-top:10px;">Secrets, GitHub, and going live.</p>
+  <div class="notes">This section covers the build-and-ship workflow. Four topics: (1) How to keep passwords and API keys safe using .env files. (2) What GitHub is and why it matters. (3) How .gitignore prevents secrets from leaking. (4) How to deploy your app to Railway so anyone can access it. These four concepts form a complete pipeline: code locally with secrets safe → push to GitHub → Railway auto-deploys. By the end, they'll understand the full journey from local project to live app.</div>
+</div>
+
+<!-- Secrets & .env Files -->
+<div class="slide dark3" data-s="s3">
+  <div class="tag w">Security: Secrets</div>
+  <h2>Never put passwords in code.</h2>
+  <div class="vs" style="margin-top:16px;">
+    <div class="vsc" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);text-align:left;border-radius:12px;overflow:hidden;padding:0;">
+      <div style="background:rgba(255,255,255,.06);padding:6px 14px;display:flex;align-items:center;gap:8px;border-bottom:1px solid rgba(255,255,255,.08);">
+        <span style="width:10px;height:10px;border-radius:50%;background:#ff5f57;display:inline-block;"></span>
+        <span style="width:10px;height:10px;border-radius:50%;background:#febc2e;display:inline-block;"></span>
+        <span style="width:10px;height:10px;border-radius:50%;background:#28c840;display:inline-block;"></span>
+        <span style="font-size:11px;color:rgba(255,255,255,.35);margin-left:8px;font-family:'Fira Code',monospace;">.env</span>
+      </div>
+      <pre style="font-size:13px;color:rgba(255,255,255,.55);font-family:'Fira Code',monospace;padding:14px;line-height:1.9;margin:0;"><span style="color:rgba(255,255,255,.25);"># Database</span>
+<span style="color:#c084fc;">DB_PASS</span><span style="color:rgba(255,255,255,.3);">=</span><span style="color:#86efac;">s3cureP@ss!</span>
+
+<span style="color:rgba(255,255,255,.25);"># API Keys</span>
+<span style="color:#c084fc;">API_KEY</span><span style="color:rgba(255,255,255,.3);">=</span><span style="color:#86efac;">sk-live-xyz...</span>
+<span style="color:#c084fc;">GH_TOKEN</span><span style="color:rgba(255,255,255,.3);">=</span><span style="color:#86efac;">ghp_abc...</span></pre>
+      <div style="padding:8px 14px;background:rgba(255,255,255,.03);border-top:1px solid rgba(255,255,255,.06);">
+        <p style="font-size:11px;color:rgba(255,255,255,.3);margin:0;">&#128274; This file stays on YOUR machine only.</p>
+      </div>
+    </div>
+    <div class="vsc" style="background:rgba(22,163,74,.08);border:2px solid var(--green);text-align:center;">
+      <h4 style="color:var(--green);">&#9989; Right</h4>
+      <pre style="font-size:14px;color:rgba(255,255,255,.6);text-align:left;font-family:'Fira Code',monospace;">password = process.env.DB_PASS
+api_key = process.env.API_KEY
+token = process.env.GH_TOKEN</pre>
+      <p style="font-size:12px;color:var(--green);margin-top:8px;">Loaded from .env file.<br>Never committed. Never shared.</p>
+    </div>
+  </div>
+  <div class="notes">This is a critical habit to build from day one. API keys, passwords, tokens — these are "secrets." If you put them directly in your code and push to GitHub, anyone can see them. Companies have been hacked this way. The solution: store secrets in a .env file (environment file). Your code reads from .env instead of having the real values. The .env file stays on YOUR machine — never pushed to GitHub, never shared. Claude Code follows this rule too — it will NEVER hardcode secrets. If you paste a secret into chat, Claude will warn you and tell you to put it in .env instead.</p>
+  </div>
+</div>
+
+<!-- How to Create .env -->
+<div class="slide light" data-s="s3">
+  <div class="tag p">How To</div>
+  <h2>Creating a .env file</h2>
+  <div class="vs" style="margin-top:16px;">
+    <div class="vsc gp" style="flex:1.2;">
+      <h4 style="color:var(--purple);">Step by step</h4>
+      <pre style="font-size:14px;line-height:1.8;">1. Create a file named <strong>.env</strong>
+   (yes, it starts with a dot)
+
+2. Add your secrets, one per line:
+   <span style="font-family:'Fira Code',monospace;font-size:13px;color:var(--purple);">API_KEY=your-key-here
+DB_PASSWORD=your-password
+SLACK_TOKEN=xoxb-your-token</span>
+
+3. Your code reads from .env
+   using a "dotenv" library</pre>
+    </div>
+    <div class="vsc m" style="flex:0.8;">
+      <h4>Rules</h4>
+      <pre style="font-size:14px;line-height:1.8;color:var(--text2);">&#10060; Never commit .env
+&#10060; Never share .env on Slack
+&#10060; Never paste keys in code
+&#10060; Never screenshot .env
+
+&#9989; One .env per machine
+&#9989; Share a .env.example
+   (with fake values)
+&#9989; Ask Claude to set it up</pre>
+    </div>
+  </div>
+  <p style="font-size:13px;color:var(--text3);margin-top:10px;">Ask Claude: "Set up a .env file for this project" — it knows the pattern.</p>
+  <div class="notes">Walk through creating a .env file. The dot prefix makes it a "hidden file" on Mac/Linux — it won't show in normal file browsers. Each line is KEY=VALUE, no spaces around the equals sign, no quotes needed (unless the value has spaces). The .gitignore file tells Git to ignore .env — so it never gets committed or pushed to GitHub. A .env.example file has the same keys but with placeholder values — this IS safe to commit because it doesn't contain real secrets. It shows the team what keys they need. Pro tip: just ask Claude Code to "set up a .env file for this project" and it will create both .env and .env.example with the right structure. Claude will also add .env to .gitignore automatically.</div>
+</div>
+
+<!-- GitHub Explainer (moved after .env) -->
+<div class="slide light" data-s="s3">
+  <div class="tag p">Jargon: GitHub</div>
+  <h2>GitHub = Google Drive for code</h2>
+  <div class="vs" style="margin-top:16px;">
+    <div class="vsc m">
+      <h4>Google Drive (what you know)</h4>
+      <pre style="font-size:14px;">Store files online
+Share with team
+See version history
+Collaborate</pre>
+    </div>
+    <div class="vsc gp">
+      <h4>GitHub</h4>
+      <pre style="font-size:14px;">Store code online
+Share with team
+See every change ever made
+Collaborate on code</pre>
+    </div>
+  </div>
+  <div class="card" style="border-left:4px solid var(--purple);margin-top:16px;max-width:600px;text-align:left;">
+    <h4 style="font-size:14px;">Repository (repo) = a project folder on GitHub</h4>
+  </div>
+  <p style="font-size:13px;color:var(--text2);margin-top:12px;">Claude Code uses Git (the engine behind GitHub) automatically. You don't need to learn Git commands.</p>
+  <div class="notes">GitHub is where developers store and share code, like Google Drive but specifically designed for code. A "repository" or "repo" is just a project folder. Git is the technology that tracks changes. GitHub is the website that hosts your Git repos online. Claude Code handles all Git operations for you — commits, branches, pushes. You don't need to learn Git commands.</div>
+</div>
+
+<!-- .gitignore -->
+<div class="slide dark3" data-s="s3">
+  <div class="tag w">Security: .gitignore</div>
+  <h2>Tell Git what to hide.</h2>
+  <div class="vs" style="margin-top:16px;">
+    <div class="vsc" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);flex:1;">
+      <h4 style="color:rgba(255,255,255,.4);margin-bottom:8px;">What is .gitignore?</h4>
+      <pre style="font-size:16px;color:rgba(255,255,255,.7);line-height:1.6;">A list of files Git
+should <strong style="color:var(--red);">never</strong> track or push.</pre>
+      <p style="font-size:13px;color:rgba(255,255,255,.35);margin-top:12px;">One file. Lives in your project root.</p>
+    </div>
+    <div class="vsc" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);flex:1.2;">
+      <h4 style="color:rgba(255,255,255,.4);margin-bottom:8px;">Example .gitignore</h4>
+      <pre style="font-size:13px;font-family:'Fira Code',monospace;line-height:1.8;color:rgba(255,255,255,.6);"><span style="color:#6b7280;"># Secrets</span>
+<span style="color:var(--red);">.env</span>
+
+<span style="color:#6b7280;"># Dependencies</span>
+<span style="color:var(--amber);">node_modules/</span>
+
+<span style="color:#6b7280;"># Build output</span>
+<span style="color:var(--amber);">dist/</span>
+<span style="color:var(--amber);">.next/</span></pre>
+    </div>
+  </div>
+  <p style="font-size:13px;color:rgba(255,255,255,.35);margin-top:12px;">Ask Claude: "Add a .gitignore for this project" &mdash; it picks the right rules. <span style="font-size:10px;">App + Terminal</span></p>
+  <div class="notes">This pairs directly with the .env slide. A .gitignore file is a plain text list of files and folders that Git should NEVER track, commit, or push to GitHub. If .env is your vault, .gitignore is the lock that keeps the vault out of Git. Without .gitignore, you might accidentally push your .env file (with real passwords) to GitHub — where anyone can see it. Common entries: .env and .env.local (secrets), node_modules/ (downloaded dependencies — huge folder, no need to share), dist/ and .next/ (build outputs that can be regenerated). Claude Code adds .env to .gitignore automatically when it creates one. But always double-check: if .gitignore doesn't exist or doesn't include .env, ask Claude "Add a .gitignore for this project" — it knows the standard patterns for every tech stack.</div>
+</div>
+
+<!-- The Full Pipeline -->
+<div class="slide light" data-s="s3">
+  <div class="tag p">The Full Picture</div>
+  <h2>From your laptop to the internet</h2>
+  <div class="flow" style="margin-top:24px;">
+    <div class="fstep ap" style="font-size:16px;min-width:130px;">&#128187; Code locally<br><span style="font-size:11px;font-weight:400;opacity:.7;">.env keeps secrets safe</span></div>
+    <div class="farr">&#8594;</div>
+    <div class="fstep ap" style="font-size:16px;min-width:130px;">&#128230; Push to GitHub<br><span style="font-size:11px;font-weight:400;opacity:.7;">.gitignore hides .env</span></div>
+    <div class="farr">&#8594;</div>
+    <div class="fstep ap" style="font-size:16px;min-width:130px;">&#9729; Railway deploys<br><span style="font-size:11px;font-weight:400;opacity:.7;">Auto-builds on push</span></div>
+    <div class="farr">&#8594;</div>
+    <div class="fstep" style="font-size:16px;min-width:130px;border:2px solid var(--green);color:var(--green);font-weight:800;">&#127760; Live URL</div>
+  </div>
+  <div class="callout cp" style="margin-top:20px;font-size:15px;">
+    This is the entire workflow. Everything before this slide was building up to this pipeline.
+  </div>
+  <div class="notes">This slide ties together the entire section. Step 1: you code on your laptop, secrets stored safely in .env. Step 2: you push to GitHub using Claude's /commit command — .gitignore ensures .env never gets pushed. Step 3: Railway watches your GitHub repo and automatically builds and deploys whenever you push new code. Step 4: your app is live at a public URL anyone can visit. This is the same pipeline used by real companies — the exact same workflow, simplified. Claude handles steps 1-2 for you (writing code and committing). You set up Railway once (step 3). After that, every push = automatic deploy.</div>
+</div>
+
+<!-- Hosting on Railway -->
+<div class="slide light" data-s="s3">
+  <div class="tag p">Going Live</div>
+  <h2>Hosting on Railway</h2>
+  <div style="display:flex;gap:16px;margin-top:16px;width:100%;max-width:900px;">
+    <div style="flex:1;background:linear-gradient(135deg,#f3e8ff,#ede9fe);border-radius:16px;padding:20px;border:1px solid #ddd6fe;">
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <span style="background:var(--purple);color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;">1</span>
+          <span style="font-size:15px;">Push code to <strong>GitHub</strong></span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <span style="background:var(--purple);color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;">2</span>
+          <span style="font-size:15px;">Connect GitHub repo to <strong>Railway</strong></span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <span style="background:var(--purple);color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;">3</span>
+          <span style="font-size:15px;">Add <strong>.env variables</strong> in Railway dashboard</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <span style="background:var(--purple);color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;">4</span>
+          <span style="font-size:15px;">Railway <strong>auto-deploys</strong> on every push</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <span style="background:var(--green);color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;">&#10003;</span>
+          <span style="font-size:15px;">Your app is <strong>live</strong> with a public URL</span>
+        </div>
+      </div>
+    </div>
+    <div style="flex:0.8;display:flex;flex-direction:column;gap:12px;">
+      <div class="card" style="border-left:4px solid var(--teal);text-align:left;">
+        <h4 style="font-size:13px;color:var(--teal);">Why Railway?</h4>
+        <p style="font-size:12px;">Simple. Free tier. No DevOps needed. Claude can help set it up.</p>
+      </div>
+      <div class="card" style="border-left:4px solid var(--amber);text-align:left;">
+        <h4 style="font-size:13px;color:var(--amber);">Your .env stays safe</h4>
+        <p style="font-size:12px;">Secrets go in Railway's dashboard, not in your code. Same idea as local .env.</p>
+      </div>
+      <div class="card" style="border-left:4px solid var(--purple);text-align:left;">
+        <h4 style="font-size:13px;color:var(--purple);">Update cycle</h4>
+        <p style="font-size:12px;">Change code &#8594; <code style="font-family:'Fira Code';font-size:11px;">/commit</code> &#8594; Push &#8594; Railway auto-deploys in ~60 seconds</p>
+      </div>
+    </div>
+  </div>
+  <p style="font-size:13px;color:var(--text2);margin-top:10px;">Ask Claude: <em>"Help me deploy this to Railway"</em> — it walks you through every step.</p>
+  <div class="notes">This completes the build-and-ship cycle. Walk through each step: (1) Push code to GitHub — Claude does this for you with /commit. It generates a commit message, pushes to your repo. (2) Connect GitHub to Railway — one-time setup on railway.app. Click "New Project," select your GitHub repo, done. (3) Add .env variables — Railway has a dashboard where you paste your secret keys. Same keys as your local .env, but Railway keeps them safe on their servers. (4) Auto-deploy — every time you push new code to GitHub, Railway automatically rebuilds and redeploys. Takes about 60 seconds. You get a public URL like your-app.up.railway.app. Why Railway over Vercel, Netlify, Render? Railway is the simplest for full-stack apps (not just frontend). Free tier gives you 500 hours/month. No Docker, no CI/CD config needed. And Claude can literally walk you through the entire setup — just ask "Help me deploy this to Railway." Demo tip: if time allows, show railway.app and the "New Project" flow. It's 3 clicks to connect a GitHub repo.</div>
+</div>
+
+<!-- Session 3 Recap -->
+<div class="slide purple" data-s="s3">
+  <h2>Session 3 Recap</h2>
+  <div style="text-align:left;max-width:600px;margin-top:20px;">
+    <p style="font-size:20px;line-height:2;color:rgba(255,255,255,.9);">
+      <strong style="color:white;">Connectors</strong> &#8212; Slack, Calendar, Gmail, Figma...<br>
+      <strong style="color:white;">Browser control</strong> &#8212; Chrome extension + Playwright<br>
+      <strong style="color:white;">Sub-agents &amp; Plugins</strong> &#8212; scale and extend<br>
+      <strong style="color:white;">Secrets</strong> &#8212; .env file, never hardcode<br>
+      <strong style="color:white;">GitHub &amp; .gitignore</strong> &#8212; store code, hide secrets<br>
+      <strong style="color:white;">Railway</strong> &#8212; deploy to the internet
+    </p>
+  </div>
+  <div class="notes">All Claude Code exclusive ecosystem features. Connectors for linking Slack, Calendar, Gmail, Figma, and more via MCP. Browser control through Chrome extension and Playwright. Sub-agents for automatic parallel work, plugins for extensibility. Then the Build & Host pipeline: .env for secrets, GitHub for storing code, .gitignore for keeping secrets safe, and Railway for deploying to a live URL. The full workflow: code locally → push to GitHub → Railway auto-deploys.</div>
+</div>
+
+<!-- ════════════════ CLOSING ════════════════ -->
+<div class="slide dark" data-s="close">
+  <h2>3 Mental Models</h2>
+  <div class="journey" style="margin-top:20px;">
+    <div class="jstep" style="background:rgba(13,148,136,.1);border:2px solid var(--teal);"><h3 style="color:var(--teal);">It's an agent.</h3><p style="color:rgba(255,255,255,.5);">6 tools, permissions<br>Desktop App + Terminal</p></div>
+    <div class="jstep" style="background:rgba(37,99,235,.1);border:2px solid var(--blue);"><h3 style="color:var(--blue);">It remembers.</h3><p style="color:rgba(255,255,255,.5);">CLAUDE.md, auto-memory<br>skills, /skill-creator</p></div>
+    <div class="jstep" style="background:rgba(124,58,237,.1);border:2px solid var(--purple);"><h3 style="color:var(--purple);">It connects &amp; ships.</h3><p style="color:rgba(255,255,255,.5);">MCP, browser, plugins<br>.env → GitHub → Railway</p></div>
+  </div>
+  <div class="notes">Three mental models to internalize. (1) Claude Code is an agent with 6 tools, accessible via Desktop App or terminal. It acts, you review. (2) It remembers across sessions: CLAUDE.md for rules, Git for version history, checkpoints for undo, auto-memory for insights. (3) It connects to your entire work environment through MCP and scales through sub-agents, plugins, and voice. If they internalize these three ideas, they'll figure out everything else through practice.</div>
+</div>
+
+<!-- All 3 Sessions Recap -->
+<div class="slide dark2" data-s="close">
+  <div class="tag w">Full Recap</div>
+  <h2>Everything you learned</h2>
+  <div style="display:flex;gap:16px;margin-top:16px;width:100%;max-width:900px;">
+    <div style="flex:1;background:rgba(255,255,255,.04);border-radius:14px;padding:16px;border:1px solid rgba(255,255,255,.08);">
+      <h4 style="color:var(--teal);font-size:13px;margin-bottom:10px;">S1: The Agent</h4>
+      <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px;font-size:12px;color:rgba(255,255,255,.5);">
+        <li>&#10003; What an AI agent is</li>
+        <li>&#10003; Ask &#8594; Act &#8594; Review loop</li>
+        <li>&#10003; 6 built-in tools</li>
+        <li>&#10003; Permissions &amp; 4 modes</li>
+        <li>&#10003; Desktop App vs Terminal</li>
+        <li>&#10003; Context window &amp; tokens</li>
+      </ul>
+    </div>
+    <div style="flex:1;background:rgba(255,255,255,.04);border-radius:14px;padding:16px;border:1px solid rgba(255,255,255,.08);">
+      <h4 style="color:var(--blue);font-size:13px;margin-bottom:10px;">S2: Memory</h4>
+      <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px;font-size:12px;color:rgba(255,255,255,.5);">
+        <li>&#10003; /commands, @files, !bash</li>
+        <li>&#10003; CLAUDE.md rules</li>
+        <li>&#10003; CLAUDE.md hierarchy</li>
+        <li>&#10003; Auto-memory</li>
+        <li>&#10003; Skills &amp; /skill-creator</li>
+      </ul>
+    </div>
+    <div style="flex:1;background:rgba(255,255,255,.04);border-radius:14px;padding:16px;border:1px solid rgba(255,255,255,.08);">
+      <h4 style="color:var(--purple);font-size:13px;margin-bottom:10px;">S3: Ecosystem</h4>
+      <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px;font-size:12px;color:rgba(255,255,255,.5);">
+        <li>&#10003; Connectors (Slack, Gmail...)</li>
+        <li>&#10003; Browser control</li>
+        <li>&#10003; Sub-agents &amp; plugins</li>
+        <li>&#10003; .env secrets &amp; .gitignore</li>
+        <li>&#10003; GitHub basics</li>
+        <li>&#10003; Deploy to Railway</li>
+      </ul>
+    </div>
+  </div>
+  <div class="notes">Full recap of all three sessions. Session 1 covered the fundamentals: what an agent is, the Ask-Act-Review loop, 6 built-in tools, permissions and modes, Desktop App vs Terminal, and context windows. Session 2 covered memory: slash commands, @references, !bash, CLAUDE.md for persistent rules, the hierarchy of CLAUDE.md files, auto-memory, and skills with /skill-creator. Session 3 covered the ecosystem: connectors for Slack/Gmail/Calendar, MCP as the universal standard, GitHub basics, .env secrets and .gitignore, browser control, and sub-agents with plugins.</div>
+</div>
+
+<!-- Final CTA -->
+<div class="slide dark" data-s="close">
+  <h1>Now go build something.</h1>
+  <div class="notes">Keep it short. They're ready. Challenge: before tomorrow, open Claude Code and try one task. Drop in a screenshot and ask Claude about it. Share what you built in #claude-code-tips. The best way to learn Claude Code is to use Claude Code.</div>
+</div>
+
+</div>
+
+<div class="nav">
+  <button onclick="prev()">&larr;</button>
+  <span class="ctr" id="counter">1</span>
+  <button onclick="next()">&rarr;</button>
+</div>
+
+<script>
+var S=document.querySelectorAll('.slide'),T=S.length,C=0,notesWin=null;
+
+function show(n){
+  for(var i=0;i<T;i++) S[i].classList.remove('active');
+  C=Math.max(0,Math.min(n,T-1));
+  S[C].classList.add('active');
+  document.getElementById('counter').textContent=(C+1)+' / '+T;
+  document.getElementById('progress').style.width=((C+1)/T*100)+'%';
+  var s=S[C].dataset.s,p=document.getElementById('progress');
+  p.style.background=s==='s1'?'var(--teal)':s==='s2'?'var(--blue)':s==='s3'?'var(--purple)':'#6B7280';
+  updateNotesWindow();
+}
+
+function updateNotesWindow(){
+  if(!notesWin||notesWin.closed) return;
+  var notes=S[C].querySelector('.notes');
+  var text=notes?notes.textContent:'No notes for this slide.';
+  var tag=S[C].querySelector('.tag');
+  var h=S[C].querySelector('h1,h2,h3,.big');
+  var title=(tag?tag.textContent+' — ':'')+(h?h.textContent:'');
+  var d=notesWin.document;
+  d.getElementById('nSlide').textContent='Slide '+(C+1)+' / '+T;
+  d.getElementById('nTitle').textContent=title;
+  d.getElementById('nText').textContent=text;
+  // Show next slide title
+  if(C+1<T){
+    var nh=S[C+1].querySelector('h1,h2,h3,.big');
+    d.getElementById('nNext').textContent='Next: '+(nh?nh.textContent:'...');
+  } else {
+    d.getElementById('nNext').textContent='Last slide';
+  }
+}
+
+function openNotesWindow(){
+  if(notesWin&&!notesWin.closed){notesWin.focus();return;}
+  notesWin=window.open('','presenterNotes','width=500,height=400,left=50,top=50');
+  var d=notesWin.document;
+  d.open();
+  d.write('<!DOCTYPE html><html><head><title>Presenter Notes</title>'+
+    '<style>*{margin:0;padding:0;box-sizing:border-box;}'+
+    'body{font-family:Inter,system-ui,sans-serif;background:#111;color:#e2e8f0;padding:24px;overflow-y:auto;}'+
+    '#nSlide{font-size:12px;color:#F59E0B;text-transform:uppercase;letter-spacing:2px;font-weight:700;}'+
+    '#nTitle{font-size:20px;font-weight:800;margin:8px 0 16px;color:#fff;}'+
+    '#nText{font-size:15px;line-height:1.7;color:#cbd5e1;}'+
+    '#nNext{font-size:13px;color:#6b7280;margin-top:24px;padding-top:16px;border-top:1px solid #333;font-style:italic;}'+
+    '</style></head><body>'+
+    '<div id="nSlide"></div><div id="nTitle"></div><div id="nText"></div><div id="nNext"></div>'+
+    '</body></html>');
+  d.close();
+  updateNotesWindow();
+}
+
+function toggleFullscreen(){
+  if(!document.fullscreenElement){
+    document.documentElement.requestFullscreen().catch(function(){});
+  } else {
+    document.exitFullscreen();
+  }
+}
+
+function jumpTo(session){for(var i=0;i<T;i++){if(S[i].dataset.s===session){show(i);return;}}}
+function next(){show(C+1);}
+function prev(){show(C-1);}
+
+document.addEventListener('keydown',function(e){
+  if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown')next();
+  else if(e.key==='ArrowLeft'||e.key==='PageUp')prev();
+  else if(e.key==='n'||e.key==='N') openNotesWindow();
+  else if(e.key==='f'||e.key==='F') toggleFullscreen();
+});
+var tx=0;document.addEventListener('touchstart',function(e){tx=e.touches[0].clientX;});
+document.addEventListener('touchend',function(e){var d=e.changedTouches[0].clientX-tx;if(Math.abs(d)>50){d>0?prev():next();}});
+show(0);
+</script>
+</body>
+</html>
